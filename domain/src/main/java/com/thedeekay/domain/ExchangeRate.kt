@@ -27,6 +27,8 @@ data class ExchangeRate(
     constructor(base: Currency, counter: Currency, rate: Long) :
             this(base, counter, BigDecimal.valueOf(rate))
 
+    fun convert(amount: Double): Money = Money(amount, base).convert(this)
+
     init {
         require(rate > BigDecimal.ZERO) { "Rate must be greater than zero!" }
     }
