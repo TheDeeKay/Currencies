@@ -55,3 +55,7 @@ data class Money(
         return result
     }
 }
+
+operator fun BigDecimal.times(currency: Currency): Money = Money(this, currency)
+operator fun Long.times(currency: Currency): Money = Money(this, currency)
+operator fun Double.times(currency: Currency): Money = Money(this, currency)

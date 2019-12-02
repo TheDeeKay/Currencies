@@ -42,4 +42,9 @@ class MoneyTest {
     fun `different currency with same amount is not equal`() {
         assertThat(Money(7.5, USD), `is`(not(equalTo((Money(7.5, GBP))))))
     }
+
+    @Test
+    fun `double times currency syntax yields the same results as constructor`() {
+        assertThat(2.0 * EUR, `is`(Money(2, EUR)))
+    }
 }

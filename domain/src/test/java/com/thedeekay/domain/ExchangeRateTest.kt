@@ -20,7 +20,7 @@ class ExchangeRateTest {
 
     @Test
     fun `converting 5,0GBP at rate 1,5 to USD yields 7,5USD`() {
-        assertThat(ExchangeRate(GBP, USD, 1.5).convert(5.0), `is`(Money(7.5, USD)))
+        assertThat(ExchangeRate(GBP, USD, 1.5).convert(5.0), `is`(7.5 * USD))
     }
 
     @Test
