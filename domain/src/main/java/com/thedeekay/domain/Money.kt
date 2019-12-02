@@ -9,4 +9,8 @@ import java.util.*
 data class Money(
     val amount: BigDecimal,
     val currency: Currency
-)
+) {
+    fun convert(exchangeRate: ExchangeRate): Money {
+        throw IllegalArgumentException()
+    }
+}
