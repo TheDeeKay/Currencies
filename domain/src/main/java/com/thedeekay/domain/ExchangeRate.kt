@@ -19,4 +19,8 @@ data class ExchangeRate(
     val base: Currency,
     val counter: Currency,
     val rate: BigDecimal
-)
+) {
+    init {
+        require(rate > BigDecimal.ZERO) { "Rate must be greater than zero!" }
+    }
+}
