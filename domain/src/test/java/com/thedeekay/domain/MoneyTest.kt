@@ -10,7 +10,7 @@ class MoneyTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun `converting any currency using exchange rate where it is not base throws an exception`() {
-        Money(ZERO, EUR).convert(ExchangeRate(USD, JPY, ONE))
+        Money(ZERO, JPY).convert(ExchangeRate(EUR, USD, ONE))
     }
 
     @Test
@@ -25,6 +25,17 @@ class MoneyTest {
         val result = Money(valueOf(2), EUR).convert(ExchangeRate(EUR, USD, valueOf(1.11)))
 
         assertThat(result, `is`(Money(valueOf(2.22), USD)))
+    }
+
+    @Test
+    fun `conversion keeps high precision`() {
+        val rate = valueOf(1.1081723)
+        val baseAmount = valueOf(43082.12)
+        val expectedAmount = valueOf(47742.412009276)
+
+        val result = Money(baseAmount, EUR).convert(ExchangeRate(EUR, USD, rate))
+
+        assertThat(result, `is`(Money(expectedAmount, USD)))
     }
 }
 
