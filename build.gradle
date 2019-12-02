@@ -27,6 +27,9 @@ ext {
     // Android test
     jUnitExtVersion = '1.1.1'
     espressoVersion = '3.2.0'
+
+    // RxJava
+    rxJavaVersion = '2.2.15'
 }
 
 allprojects {

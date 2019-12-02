@@ -1,4 +1,4 @@
-package com.thedeekay.commons
+package com.thedeekay.networking
 
 /**
  * Sealed class containing failure reason of a network request.

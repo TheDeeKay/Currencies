@@ -1,2 +1,2 @@
-include ':app', ':domain', ':commons'
+include ':app', ':domain', ':commons', ':networking'
 rootProject.name='Currencies'
