@@ -3,8 +3,7 @@ package com.thedeekay.domain
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
-import java.math.BigDecimal.ONE
-import java.math.BigDecimal.ZERO
+import java.math.BigDecimal.*
 import java.util.*
 
 class MoneyTest {
@@ -21,6 +20,12 @@ class MoneyTest {
         assertThat(result.amount, `is`(ZERO))
     }
 
+    @Test
+    fun `converting 2EUR to USD at 1,11 gives 2,22USD`() {
+        val result = Money(valueOf(2), EUR).convert(ExchangeRate(EUR, USD, valueOf(1.11)))
+
+        assertThat(result, `is`(Money(valueOf(2.22), USD)))
+    }
 }
 
 private val USD = Currency.getInstance("USD")

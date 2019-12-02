@@ -12,6 +12,6 @@ data class Money(
 ) {
     fun convert(exchangeRate: ExchangeRate): Money {
         if (exchangeRate.base != currency) throw IllegalArgumentException()
-        return Money(BigDecimal.ZERO, currency)
+        return Money(amount.multiply(exchangeRate.rate), exchangeRate.counter)
     }
 }
