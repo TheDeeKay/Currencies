@@ -12,3 +12,17 @@ val GBP = Currency("GBP")
  */
 @Suppress("FunctionName")
 fun Currency(currencyCode: String): Currency = Currency.getInstance(currencyCode)!!
+
+data class CurrencyPair(
+    val base: Currency,
+    val counter: Currency
+) {
+
+    infix fun at(rate: Double): ExchangeRate {
+        return ExchangeRate(base, counter, rate)
+    }
+}
+
+operator fun Currency.div(other: Currency): CurrencyPair {
+    return CurrencyPair(this, other)
+}
