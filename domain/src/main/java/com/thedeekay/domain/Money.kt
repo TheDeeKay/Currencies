@@ -15,6 +15,11 @@ data class Money(
 
     constructor(amount: Long, currency: Currency) : this(BigDecimal.valueOf(amount), currency)
 
+    /**
+     * Converts this amount of currency to another currency at the given exchange rate.
+     *
+     * @param exchangeRate The rate at which to convert this money.
+     */
     fun convert(exchangeRate: ExchangeRate): Money {
         if (exchangeRate.base != currency) {
             throw IllegalArgumentException("Base currency must be this Money's currency")
@@ -22,6 +27,15 @@ data class Money(
 
         return Money(amount.multiply(exchangeRate.rate), exchangeRate.counter)
     }
+
+    /**
+     * Convenience [convert] function that takes in the target currency and rate at which to
+     * convert.
+     *
+     * @param to Currency to which this money should be converted
+     * @param at Conversion rate between current and target currency (current is taken as base).
+     */
+    fun convert(to: Currency, at: Double): Money = convert(ExchangeRate(currency, to, at))
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
