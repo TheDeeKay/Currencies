@@ -4,13 +4,12 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import java.math.BigDecimal.*
-import java.util.*
 
 class MoneyTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun `converting any currency using exchange rate where it is not base throws an exception`() {
-        Money(ZERO, JPY).convert(ExchangeRate(EUR, USD, ONE))
+        Money(ZERO, GBP).convert(ExchangeRate(EUR, USD, ONE))
     }
 
     @Test
@@ -38,7 +37,3 @@ class MoneyTest {
         assertThat(result, `is`(Money(expectedAmount, USD)))
     }
 }
-
-private val USD = Currency.getInstance("USD")
-private val JPY = Currency.getInstance("JPY")
-private val EUR = Currency.getInstance("EUR")
