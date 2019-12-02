@@ -1,6 +1,7 @@
 package com.thedeekay.domain
 
 import java.math.BigDecimal
+import java.util.*
 
 /**
  * Represents a certain amount of specific currency.

@@ -1,6 +1,7 @@
 package com.thedeekay.domain
 
 import java.math.BigDecimal
+import java.util.*
 
 /**
  * Exchange rate between two currencies.
