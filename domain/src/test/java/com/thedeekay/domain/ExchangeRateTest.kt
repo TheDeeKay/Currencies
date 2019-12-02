@@ -12,6 +12,6 @@ class ExchangeRateTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun `exchange rate cannot be zero`() {
-        ExchangeRate(USD, EUR, BigDecimal(-1.12))
+        ExchangeRate(USD, EUR, BigDecimal(0))
     }
 }
