@@ -11,7 +11,10 @@ data class Money(
     val currency: Currency
 ) {
     fun convert(exchangeRate: ExchangeRate): Money {
-        if (exchangeRate.base != currency) throw IllegalArgumentException()
+        if (exchangeRate.base != currency) {
+            throw IllegalArgumentException("Base currency must be this Money's currency")
+        }
+
         return Money(amount.multiply(exchangeRate.rate), exchangeRate.counter)
     }
 }
