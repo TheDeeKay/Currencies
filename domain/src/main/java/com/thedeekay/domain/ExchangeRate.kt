@@ -20,6 +20,13 @@ data class ExchangeRate(
     val counter: Currency,
     val rate: BigDecimal
 ) {
+
+    constructor(base: Currency, counter: Currency, rate: Double) :
+            this(base, counter, BigDecimal.valueOf(rate))
+
+    constructor(base: Currency, counter: Currency, rate: Long) :
+            this(base, counter, BigDecimal.valueOf(rate))
+
     init {
         require(rate > BigDecimal.ZERO) { "Rate must be greater than zero!" }
     }

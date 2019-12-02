@@ -10,6 +10,11 @@ data class Money(
     val amount: BigDecimal,
     val currency: Currency
 ) {
+
+    constructor(amount: Double, currency: Currency) : this(BigDecimal.valueOf(amount), currency)
+
+    constructor(amount: Long, currency: Currency) : this(BigDecimal.valueOf(amount), currency)
+
     fun convert(exchangeRate: ExchangeRate): Money {
         if (exchangeRate.base != currency) {
             throw IllegalArgumentException("Base currency must be this Money's currency")
