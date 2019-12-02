@@ -11,6 +11,7 @@ data class Money(
     val currency: Currency
 ) {
     fun convert(exchangeRate: ExchangeRate): Money {
-        throw IllegalArgumentException()
+        if (exchangeRate.base != currency) throw IllegalArgumentException()
+        return Money(BigDecimal.ZERO, currency)
     }
 }
