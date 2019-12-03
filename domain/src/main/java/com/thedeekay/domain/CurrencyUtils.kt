@@ -2,6 +2,7 @@ package com.thedeekay.domain
 
 import java.util.*
 
+// Commonly used currencies
 val EUR = Currency("EUR")
 val USD = Currency("USD")
 val GBP = Currency("GBP")
@@ -18,6 +19,9 @@ data class CurrencyPair(
     val counter: Currency
 ) {
 
+    /**
+     * Creates [ExchangeRate] between base and counter currencies of this pair at the given [rate].
+     */
     infix fun at(rate: Double): ExchangeRate {
         return ExchangeRate(base, counter, rate)
     }
