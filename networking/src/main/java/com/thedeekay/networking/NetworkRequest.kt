@@ -19,3 +19,12 @@ interface NetworkRequest<T, in P, E> {
      */
     fun execute(params: P): Single<Outcome<T, NetworkFailure<E>>>
 }
+
+/**
+ * Simple class for decorating [NetworkRequest].
+ */
+class NetworkRequestDecorator<T, in P, E>(
+    private val request: (P) -> Single<Outcome<T, NetworkFailure<E>>>
+) : NetworkRequest<T, P, E> {
+    override fun execute(params: P): Single<Outcome<T, NetworkFailure<E>>> = request(params)
+}
