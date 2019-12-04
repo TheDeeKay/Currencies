@@ -3,9 +3,12 @@ package com.thedeekay.domain
 import java.util.*
 
 // Commonly used currencies
+val CHF = Currency("CHF")
 val EUR = Currency("EUR")
-val USD = Currency("USD")
 val GBP = Currency("GBP")
+val JPY = Currency("JPY")
+val RUB = Currency("RUB")
+val USD = Currency("USD")
 
 /**
  * Creates a [Currency] with the given ISO 4217 currency code.
