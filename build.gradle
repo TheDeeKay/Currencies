@@ -23,6 +23,8 @@ ext {
 
     // JUnit
     jUnitVersion = '4.12'
+    // test
+    mockWebServerVersion = '4.2.1'
 
     // Android test
     jUnitExtVersion = '1.1.1'
