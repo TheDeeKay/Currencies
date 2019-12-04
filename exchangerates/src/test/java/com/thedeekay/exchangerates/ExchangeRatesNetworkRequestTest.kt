@@ -6,7 +6,9 @@ import com.thedeekay.commons.Outcome.Failure
 import com.thedeekay.commons.Outcome.Success
 import com.thedeekay.domain.*
 import com.thedeekay.exchangerates.ExchangeRatesFailure.InvalidBase
+import com.thedeekay.networking.NetworkFailure.Generic.Unknown
 import com.thedeekay.networking.NetworkFailure.Specific
+import com.thedeekay.retrofittestutils.forRequest
 import com.thedeekay.retrofittestutils.respondWith
 import okhttp3.HttpUrl
 import okhttp3.mockwebserver.MockWebServer
@@ -62,7 +64,7 @@ class ExchangeRatesNetworkRequestTest {
             EUR / USD at 1.1669
         )
         server.dispatcher =
-            com.thedeekay.retrofittestutils.forRequest {
+            forRequest {
                 path = "/latest?base=EUR"
                 method = "GET"
             }.respondWith {
@@ -78,10 +80,10 @@ class ExchangeRatesNetworkRequestTest {
     }
 
     @Test
-    fun `exchange rates network request should gracefully handle error response`() {
+    fun `exchange rates network request should gracefully handle 'invalid base' response`() {
         val exchangeRatesResponse = """     {"error":"Invalid base"}     """
         server.dispatcher =
-            com.thedeekay.retrofittestutils.forRequest {
+            forRequest {
                 path = "/latest?base=RSD"
                 method = "GET"
             }.respondWith {
@@ -92,6 +94,24 @@ class ExchangeRatesNetworkRequestTest {
         request.execute(ExchangeRatesRequestParams(RSD)).test()
 
             .assertValue(Failure(Specific(InvalidBase(RSD))))
+            .assertNoErrors()
+            .assertComplete()
+    }
+
+    @Test
+    fun `exchange rates network request should gracefully unknown error response`() {
+        server.dispatcher =
+            forRequest {
+                path = "/latest?base=RSD"
+                method = "GET"
+            }.respondWith {
+                setResponseCode(500)
+                setBody("")
+            }
+
+        request.execute(ExchangeRatesRequestParams(RSD)).test()
+
+            .assertValue(Failure(Unknown))
             .assertNoErrors()
             .assertComplete()
     }

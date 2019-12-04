@@ -9,6 +9,7 @@ import com.thedeekay.domain.ExchangeRate
 import com.thedeekay.domain.div
 import com.thedeekay.exchangerates.ExchangeRatesFailure.InvalidBase
 import com.thedeekay.networking.NetworkFailure
+import com.thedeekay.networking.NetworkFailure.Generic.Unknown
 import com.thedeekay.networking.NetworkFailure.Specific
 import com.thedeekay.networking.NetworkRequest
 import io.reactivex.Single
@@ -33,8 +34,10 @@ class ExchangeRatesNetworkRequest internal constructor(
                             base / Currency(counter) at rate
                         }
                     )
-                } else {
+                } else if (response.code() == 422) {
                     Failure(Specific(InvalidBase(params.base)))
+                } else {
+                    Failure(Unknown)
                 }
             }
     }
