@@ -21,6 +21,9 @@ ext {
     appCompatVersion = '1.1.0'
     constraintLayoutVersion = '1.1.3'
 
+    retrofitVersion = '2.6.2'
+    moshiVersion = '1.9.2'
+
     // JUnit
     jUnitVersion = '4.12'
     // test

@@ -31,6 +31,12 @@ dependencies {
 
     api "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
 
+    // network
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
+    implementation "com.squareup.moshi:moshi-kotlin:$moshiVersion"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     testImplementation "junit:junit:$jUnitVersion"
