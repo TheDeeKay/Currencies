@@ -7,6 +7,7 @@ import com.thedeekay.domain.*
 import com.thedeekay.retrofittestutils.respondWith
 import okhttp3.HttpUrl
 import okhttp3.mockwebserver.MockWebServer
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Retrofit
@@ -27,6 +28,11 @@ class ExchangeRatesNetworkRequestTest {
         val retrofit = createRetrofit(baseUrl = server.url(""))
         val exchangeRatesService = retrofit.create(ExchangeRatesService::class.java)
         request = ExchangeRatesNetworkRequest(exchangeRatesService)
+    }
+
+    @After
+    fun tearDown() {
+        server.shutdown()
     }
 
     @Test
