@@ -4,6 +4,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.thedeekay.commons.Outcome.Success
 import com.thedeekay.domain.*
+import okhttp3.Headers
 import okhttp3.HttpUrl
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
@@ -15,10 +16,11 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 
+// TODO: add RxJava rule for schedulers
+// TODO: do something with potentially uncaught RxJava exceptions
 class ExchangeRatesNetworkRequestTest {
 
     private lateinit var server: MockWebServer
-
     private lateinit var retrofit: Retrofit
 
     @Before
@@ -48,20 +50,14 @@ class ExchangeRatesNetworkRequestTest {
             EUR / RUB at 79.814,
             EUR / USD at 1.1669
         )
-        server.dispatcher = object : Dispatcher() {
-            override fun dispatch(request: RecordedRequest): MockResponse {
-                when {
-                    request.path == "/latest?base=EUR" && request.method == "GET" -> {
-                        return MockResponse().apply {
-                            setResponseCode(200)
-                            setBody(exchangeRatesResponse)
-                        }
-                    }
-                    else -> throw IllegalArgumentException("Wrong request path or method!")
-                }
+        server.dispatcher =
+            forRequest {
+                path = "/latest?base=EUR"
+                method = "GET"
+            }.respondWith {
+                setResponseCode(200)
+                setBody(exchangeRatesResponse)
             }
-
-        }
         val exchangeRatesService = retrofit.create(ExchangeRatesService::class.java)
 
         val request = ExchangeRatesNetworkRequest(exchangeRatesService)
@@ -80,4 +76,50 @@ class ExchangeRatesNetworkRequestTest {
             .baseUrl(baseUrl)
             .build()
     }
+}
+
+class RequestSpecDispatcher(
+    private val requestSpec: RequestSpec,
+    private val responseCreator: (RecordedRequest) -> MockResponse
+) : Dispatcher() {
+
+    override fun dispatch(request: RecordedRequest): MockResponse = with(requestSpec) {
+        if (
+            (headers == null || headers == request.headers)
+            && (method == null || method == request.method)
+            && (headers == null || headers == request.headers)
+        ) {
+            return@with responseCreator(request)
+        } else {
+            throw IllegalArgumentException("Request: $request did not match the given spec: $requestSpec")
+        }
+    }
+}
+
+data class RequestSpec(
+    val path: String? = null,
+    val method: String? = null,
+    val headers: Headers? = null
+)
+
+class RequestSpecBuilder(
+    var path: String? = null,
+    var method: String? = null,
+    var headers: Headers? = null
+)
+
+fun requestSpec(block: RequestSpecBuilder.() -> Unit): RequestSpec =
+    with(RequestSpecBuilder().apply(block)) {
+        RequestSpec(path, method, headers)
+    }
+
+fun forRequest(block: RequestSpecBuilder.() -> Unit): RequestSpec = requestSpec(block)
+
+fun RequestSpec.respondWith(response: MockResponse.(RecordedRequest) -> Unit): RequestSpecDispatcher {
+    val responseCreator = { request: RecordedRequest ->
+        val mockResponse = MockResponse()
+        mockResponse.response(request)
+        mockResponse
+    }
+    return RequestSpecDispatcher(this, responseCreator)
 }
