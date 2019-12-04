@@ -4,6 +4,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.thedeekay.commons.Outcome.Success
 import com.thedeekay.domain.*
+import com.thedeekay.retrofittestutils.respondWith
 import okhttp3.HttpUrl
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.Before
@@ -52,7 +53,7 @@ class ExchangeRatesNetworkRequestTest {
             EUR / USD at 1.1669
         )
         server.dispatcher =
-            forRequest {
+            com.thedeekay.retrofittestutils.forRequest {
                 path = "/latest?base=EUR"
                 method = "GET"
             }.respondWith {

@@ -1,4 +1,4 @@
-package com.thedeekay.exchangerates
+package com.thedeekay.retrofittestutils
 
 import okhttp3.Headers
 import okhttp3.mockwebserver.Dispatcher
@@ -47,7 +47,8 @@ fun requestSpec(block: RequestSpecBuilder.() -> Unit): RequestSpec =
     }
 
 // exists simply to enable 'forRequest {...}.respondWith {...}' syntax
-fun forRequest(block: RequestSpecBuilder.() -> Unit): RequestSpec = requestSpec(block)
+fun forRequest(block: RequestSpecBuilder.() -> Unit): RequestSpec =
+    requestSpec(block)
 
 fun RequestSpec.respondWith(response: MockResponse.(RecordedRequest) -> Unit): RequestSpecDispatcher {
     val responseCreator = { request: RecordedRequest ->
@@ -55,5 +56,8 @@ fun RequestSpec.respondWith(response: MockResponse.(RecordedRequest) -> Unit): R
         mockResponse.response(request)
         mockResponse
     }
-    return RequestSpecDispatcher(this, responseCreator)
+    return RequestSpecDispatcher(
+        this,
+        responseCreator
+    )
 }
