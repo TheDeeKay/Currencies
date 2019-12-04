@@ -2,11 +2,14 @@ package com.thedeekay.exchangerates
 
 import com.squareup.moshi.Json
 import com.thedeekay.commons.Outcome
+import com.thedeekay.commons.Outcome.Failure
 import com.thedeekay.commons.Outcome.Success
 import com.thedeekay.domain.Currency
 import com.thedeekay.domain.ExchangeRate
 import com.thedeekay.domain.div
+import com.thedeekay.exchangerates.ExchangeRatesFailure.InvalidBase
 import com.thedeekay.networking.NetworkFailure
+import com.thedeekay.networking.NetworkFailure.Specific
 import com.thedeekay.networking.NetworkRequest
 import io.reactivex.Single
 import java.util.*
@@ -15,12 +18,11 @@ import java.util.*
  * Network request that fetches exchange rates between given base currency and all other available
  * currencies.
  */
-// TODO: consider adding 'invalid base currency' error type
 class ExchangeRatesNetworkRequest internal constructor(
     private val exchangeRatesService: ExchangeRatesService
-) : NetworkRequest<List<ExchangeRate>, ExchangeRatesRequestParams, Nothing> {
+) : NetworkRequest<List<ExchangeRate>, ExchangeRatesRequestParams, ExchangeRatesFailure> {
 
-    override fun execute(params: ExchangeRatesRequestParams): Single<Outcome<List<ExchangeRate>, NetworkFailure<Nothing>>> {
+    override fun execute(params: ExchangeRatesRequestParams): Single<Outcome<List<ExchangeRate>, NetworkFailure<ExchangeRatesFailure>>> {
         return exchangeRatesService.fetchAllExchangeRates(params.base.currencyCode)
             .map { response ->
                 if (response.isSuccessful) {
@@ -31,7 +33,9 @@ class ExchangeRatesNetworkRequest internal constructor(
                             base / Currency(counter) at rate
                         }
                     )
-                } else TODO("handle this as well")
+                } else {
+                    Failure(Specific(InvalidBase(params.base)))
+                }
             }
     }
 }
@@ -42,3 +46,11 @@ data class ExchangeRatesResponse(
     @Json(name = "rates")
     val currencyAndRateMap: Map<String, Double>
 )
+
+sealed class ExchangeRatesFailure {
+
+    /**
+     * Indicates that the server deemed the given currency as an invalid base currency.
+     */
+    data class InvalidBase(val base: Currency) : ExchangeRatesFailure()
+}

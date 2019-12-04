@@ -2,8 +2,11 @@ package com.thedeekay.exchangerates
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.thedeekay.commons.Outcome.Failure
 import com.thedeekay.commons.Outcome.Success
 import com.thedeekay.domain.*
+import com.thedeekay.exchangerates.ExchangeRatesFailure.InvalidBase
+import com.thedeekay.networking.NetworkFailure.Specific
 import com.thedeekay.retrofittestutils.respondWith
 import okhttp3.HttpUrl
 import okhttp3.mockwebserver.MockWebServer
@@ -70,6 +73,26 @@ class ExchangeRatesNetworkRequestTest {
         request.execute(ExchangeRatesRequestParams(EUR)).test()
 
             .assertValue(Success(expectedExchangeRates))
+            .assertNoErrors()
+            .assertComplete()
+    }
+
+    @Test
+    fun `exchange rates network request should gracefully handle error response`() {
+        val exchangeRatesResponse = """     {"error":"Invalid base"}     """
+        server.dispatcher =
+            com.thedeekay.retrofittestutils.forRequest {
+                path = "/latest?base=RSD"
+                method = "GET"
+            }.respondWith {
+                setResponseCode(422)
+                setBody(exchangeRatesResponse)
+            }
+
+        request.execute(ExchangeRatesRequestParams(RSD)).test()
+
+            .assertValue(Failure(Specific(InvalidBase(RSD))))
+            .assertNoErrors()
             .assertComplete()
     }
 
@@ -83,3 +106,5 @@ class ExchangeRatesNetworkRequestTest {
             .build()
     }
 }
+
+private val RSD = Currency("RSD")

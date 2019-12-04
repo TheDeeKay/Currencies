@@ -13,6 +13,7 @@ sealed class NetworkFailure<out E> {
     sealed class Generic : NetworkFailure<Nothing>() {
         object NoInternet : Generic()
         object Timeout : Generic()
+        object Unknown : Generic()
     }
 
     data class Specific<out E>(val failure: E) : NetworkFailure<E>()
