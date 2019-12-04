@@ -1,2 +1,2 @@
-include ':app', ':domain', ':commons', ':exchangerates', ':okhttptestutils', ':networking'
+include ':app', ':domain', ':commons', ':exchangerates', ':okhttptestutils', ':networking', ':rxtestutils'
 rootProject.name='Currencies'

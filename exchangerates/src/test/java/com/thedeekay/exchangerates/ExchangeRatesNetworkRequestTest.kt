@@ -10,10 +10,12 @@ import com.thedeekay.networking.NetworkFailure.Generic.Unknown
 import com.thedeekay.networking.NetworkFailure.Specific
 import com.thedeekay.retrofittestutils.forRequest
 import com.thedeekay.retrofittestutils.respondWith
+import com.thedeekay.rxtestutils.RxJavaSchedulersRule
 import okhttp3.HttpUrl
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -22,6 +24,9 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 // TODO: add RxJava rule for schedulers
 // TODO: do something with potentially uncaught RxJava exceptions
 class ExchangeRatesNetworkRequestTest {
+
+    @get:Rule
+    val rxJavaSchedulersRule = RxJavaSchedulersRule()
 
     private lateinit var server: MockWebServer
     private lateinit var request: ExchangeRatesNetworkRequest

@@ -26,20 +26,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    api project(path: ':networking')
-    api project(path: ':domain')
-
-    api "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
-
-    // network
-    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
-    implementation "com.squareup.moshi:moshi-kotlin:$moshiVersion"
-    implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
 
-    testImplementation "junit:junit:$jUnitVersion"
-    testImplementation project(path: ':okhttptestutils')
-    testImplementation project(path: ':rxtestutils')
+    api 'junit:junit:4.12'
 }
