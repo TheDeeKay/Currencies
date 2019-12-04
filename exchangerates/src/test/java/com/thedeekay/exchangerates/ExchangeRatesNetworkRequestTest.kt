@@ -21,18 +21,22 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 class ExchangeRatesNetworkRequestTest {
 
     private lateinit var server: MockWebServer
-    private lateinit var retrofit: Retrofit
+    private lateinit var request: ExchangeRatesNetworkRequest
 
     @Before
     fun setUp() {
         server = MockWebServer()
-        retrofit = createRetrofit(baseUrl = server.url(""))
+
+        val retrofit = createRetrofit(baseUrl = server.url(""))
+        val exchangeRatesService = retrofit.create(ExchangeRatesService::class.java)
+        request = ExchangeRatesNetworkRequest(exchangeRatesService)
     }
 
     @Test
     fun `exchange rates network request should hit proper endpoint and parse rates`() {
         val exchangeRatesResponse =
-            """{
+            """
+            {
                 "base":"EUR",
                 "date":"2018-09-06",
                 "rates":{
@@ -42,7 +46,8 @@ class ExchangeRatesNetworkRequestTest {
                     "RUB":79.814,
                     "USD":1.1669
                 }
-            }"""
+            }
+            """
         val expectedExchangeRates = listOf(
             EUR / CHF at 1.1309,
             EUR / GBP at 0.90094,
@@ -58,13 +63,11 @@ class ExchangeRatesNetworkRequestTest {
                 setResponseCode(200)
                 setBody(exchangeRatesResponse)
             }
-        val exchangeRatesService = retrofit.create(ExchangeRatesService::class.java)
 
-        val request = ExchangeRatesNetworkRequest(exchangeRatesService)
+        request.execute(ExchangeRatesRequestParams(EUR)).test()
 
-        request.execute(ExchangeRatesRequestParams(EUR))
-            .test()
             .assertValue(Success(expectedExchangeRates))
+            .assertComplete()
     }
 
     private fun createRetrofit(baseUrl: HttpUrl): Retrofit {
