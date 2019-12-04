@@ -26,18 +26,18 @@ class ExchangeRatesNetworkRequest internal constructor(
     override fun execute(params: ExchangeRatesRequestParams): Single<Outcome<List<ExchangeRate>, NetworkFailure<ExchangeRatesFailure>>> {
         return exchangeRatesService.fetchAllExchangeRates(params.base.currencyCode)
             .map { response ->
-                if (response.isSuccessful) {
-                    val rates = response.body()!!
-                    val base = params.base
-                    Success(
-                        rates.currencyAndRateMap.map { (counter, rate) ->
-                            base / Currency(counter) at rate
-                        }
-                    )
-                } else if (response.code() == 422) {
-                    Failure(Specific(InvalidBase(params.base)))
-                } else {
-                    Failure(Unknown)
+                when {
+                    response.isSuccessful -> {
+                        val rates = response.body()!!
+                        val base = params.base
+                        Success(
+                            rates.currencyAndRateMap.map { (counter, rate) ->
+                                base / Currency(counter) at rate
+                            }
+                        )
+                    }
+                    response.code() == 422 -> Failure(Specific(InvalidBase(params.base)))
+                    else -> Failure(Unknown)
                 }
             }
     }
