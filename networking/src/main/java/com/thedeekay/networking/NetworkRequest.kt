@@ -32,14 +32,16 @@ private class SimpleNetworkRequest<T, in P, E>(
 
 fun <T, P, E> simpleRequest(
     request: (P) -> Single<Outcome<T, NetworkFailure<E>>>
-): NetworkRequest<T, P, E> = SimpleNetworkRequest(request)
+): NetworkRequest<T, P, E> =
+    SimpleNetworkRequest(request)
 
 /**
  * Default implementation for [NetworkRequest]. Includes threading and other default settings.
  */
 fun <T, P, E> defaultNetworkRequest(
     request: (P) -> Single<Outcome<T, NetworkFailure<E>>>
-): NetworkRequest<T, P, E> = simpleRequest { params ->
-    request(params)
-        .subscribeOn(Schedulers.io())
-}
+): NetworkRequest<T, P, E> =
+    simpleRequest { params ->
+        request(params)
+            .subscribeOn(Schedulers.io())
+    }
