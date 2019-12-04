@@ -2,6 +2,7 @@ package com.thedeekay.networking
 
 import com.thedeekay.commons.Outcome
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 
 /**
  * A specification for network request, triggering one when [execute] is called.
@@ -21,10 +22,24 @@ interface NetworkRequest<T, in P, E> {
 }
 
 /**
- * Simple class for decorating [NetworkRequest].
+ * Simple [NetworkRequest] class for easy implementation by delegation.
  */
-class NetworkRequestDecorator<T, in P, E>(
+private class SimpleNetworkRequest<T, in P, E>(
     private val request: (P) -> Single<Outcome<T, NetworkFailure<E>>>
 ) : NetworkRequest<T, P, E> {
     override fun execute(params: P): Single<Outcome<T, NetworkFailure<E>>> = request(params)
+}
+
+fun <T, P, E> simpleRequest(
+    request: (P) -> Single<Outcome<T, NetworkFailure<E>>>
+): NetworkRequest<T, P, E> = SimpleNetworkRequest(request)
+
+/**
+ * Default implementation for [NetworkRequest]. Includes threading and other default settings.
+ */
+fun <T, P, E> defaultNetworkRequest(
+    request: (P) -> Single<Outcome<T, NetworkFailure<E>>>
+): NetworkRequest<T, P, E> = simpleRequest { params ->
+    request(params)
+        .subscribeOn(Schedulers.io())
 }
