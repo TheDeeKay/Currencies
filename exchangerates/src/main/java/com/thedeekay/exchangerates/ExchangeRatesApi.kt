@@ -5,6 +5,6 @@ package com.thedeekay.exchangerates
  */
 interface ExchangeRatesApi {
 
-
+    fun exchangeRatesNetworkRequest(): ExchangeRatesNetworkRequest
 
 }

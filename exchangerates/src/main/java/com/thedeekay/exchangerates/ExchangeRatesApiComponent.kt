@@ -1,7 +1,8 @@
 package com.thedeekay.exchangerates
 
 import dagger.Component
+import javax.inject.Singleton
 
-@Component
-interface ExchangeRatesApiComponent : ExchangeRatesApi {
-}
+@Singleton
+@Component(modules = [ExchangeRatesNetworkModule::class])
+internal interface ExchangeRatesApiComponent : ExchangeRatesApi
