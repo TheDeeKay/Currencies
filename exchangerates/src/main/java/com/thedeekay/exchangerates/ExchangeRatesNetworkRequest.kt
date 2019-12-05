@@ -12,12 +12,13 @@ import com.thedeekay.networking.NetworkFailure.Specific
 import com.thedeekay.networking.NetworkRequest
 import com.thedeekay.networking.requestdecorators.defaultNetworkRequest
 import java.util.*
+import javax.inject.Inject
 
 /**
  * Network request that fetches exchange rates between given base currency and all other available
  * currencies.
  */
-class ExchangeRatesNetworkRequest internal constructor(
+class ExchangeRatesNetworkRequest @Inject internal constructor(
     private val exchangeRatesService: ExchangeRatesService
 ) : NetworkRequest<List<ExchangeRate>, ExchangeRatesRequestParams, ExchangeRatesFailure>
 by defaultNetworkRequest({ params ->
