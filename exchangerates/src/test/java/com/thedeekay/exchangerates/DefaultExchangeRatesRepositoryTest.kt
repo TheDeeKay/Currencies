@@ -3,8 +3,11 @@ package com.thedeekay.exchangerates
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import com.thedeekay.commons.Outcome.Failure
+import com.thedeekay.commons.Outcome.Success
 import com.thedeekay.domain.*
 import com.thedeekay.networking.FakeNetworkRequest
+import com.thedeekay.networking.NetworkFailure.Generic.Unknown
 import com.thedeekay.rxtestutils.assertValueHasSameElementsAs
 import com.thedeekay.rxtestutils.assertValuesHaveSameElementsAs
 import io.mockk.every
@@ -37,9 +40,10 @@ class DefaultExchangeRatesRepositoryTest {
             .build()
 
         exchangeRatesNetworkRequest = mockk()
-        every { exchangeRatesNetworkRequest.execute(any()) }.returns(Single.never())
+        every { exchangeRatesNetworkRequest.execute(any()) }.returns(Single.just(Failure(Unknown)))
 
-        repository = DefaultExchangeRatesRepository(exchangeRatesDatabase, exchangeRatesNetworkRequest)
+        repository =
+            DefaultExchangeRatesRepository(exchangeRatesDatabase, exchangeRatesNetworkRequest)
     }
 
     ///////////////////////////////
@@ -51,6 +55,7 @@ class DefaultExchangeRatesRepositoryTest {
         repository.allExchangeRates(EUR).test()
 
             .assertValue(emptyList())
+            .assertNoErrors()
             .assertNotComplete()
     }
 
@@ -61,6 +66,7 @@ class DefaultExchangeRatesRepositoryTest {
         repository.allExchangeRates(EUR).test()
 
             .assertValue(emptyList())
+            .assertNoErrors()
             .assertNotComplete()
     }
 
@@ -71,6 +77,7 @@ class DefaultExchangeRatesRepositoryTest {
         repository.allExchangeRates(EUR).test()
 
             .assertValueHasSameElementsAs(EUR_EXCHANGE_RATES)
+            .assertNoErrors()
             .assertNotComplete()
     }
 
@@ -82,6 +89,7 @@ class DefaultExchangeRatesRepositoryTest {
         repository.allExchangeRates(EUR).test()
 
             .assertValueHasSameElementsAs(EUR_EXCHANGE_RATES2)
+            .assertNoErrors()
             .assertNotComplete()
     }
 
@@ -93,6 +101,7 @@ class DefaultExchangeRatesRepositoryTest {
         repository.allExchangeRates(EUR).test()
 
             .assertValueHasSameElementsAs(EUR_EXCHANGE_RATES)
+            .assertNoErrors()
             .assertNotComplete()
     }
 
@@ -105,6 +114,7 @@ class DefaultExchangeRatesRepositoryTest {
 
         testSubscriber
             .assertValuesHaveSameElementsAs(EUR_EXCHANGE_RATES, EUR_EXCHANGE_RATES2)
+            .assertNoErrors()
             .assertNotComplete()
     }
 
@@ -114,9 +124,15 @@ class DefaultExchangeRatesRepositoryTest {
     ////////////////////////////
 
     @Test
-    fun `subscribing to empty repository should fetch rates for the given base`() {
-        val testSubscriber = repository.allExchangeRates(EUR).test()
+    fun `subscribing to empty repository should fetch rates for the given base and skip empty emission`() {
+        every { exchangeRatesNetworkRequest.execute(ExchangeRatesRequestParams(EUR)) }
+            .returns(Single.just(Success(EUR_EXCHANGE_RATES)))
 
+        repository.allExchangeRates(EUR).test()
+
+            .assertValueHasSameElementsAs(EUR_EXCHANGE_RATES)
+            .assertNoErrors()
+            .assertNotComplete()
     }
 }
 
