@@ -198,7 +198,6 @@ class DefaultExchangeRatesRepositoryTest {
             .assertNotComplete()
     }
 
-
 }
 // TODO: see how errors should be propagated from the repository
 

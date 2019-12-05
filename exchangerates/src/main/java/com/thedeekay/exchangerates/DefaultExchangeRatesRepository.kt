@@ -15,14 +15,20 @@ class DefaultExchangeRatesRepository(
     private val exchangeRatesNetworkRequest: ExchangeRatesNetworkRequest
 ) : ExchangeRatesRepository {
 
+    private val allExchangeRatesMap = mutableMapOf<Currency, Flowable<List<ExchangeRate>>>()
+
     private val exchangeRatesDao = exchangeRatesDatabase.exchangeRates()
 
+    @Synchronized
     override fun allExchangeRates(base: Currency): Flowable<List<ExchangeRate>> {
-        return exchangeRatesDao.allExchangeRates(base)
-            .mergeWith(
-                Flowable.interval(0, 1, SECONDS)
-                    .flatMapCompletable { fetchRates(base) }
-            )
+        return allExchangeRatesMap.getOrPut(base) {
+            exchangeRatesDao.allExchangeRates(base)
+                .mergeWith(
+                    Flowable.interval(0, 1, SECONDS)
+                        .flatMapCompletable { fetchRates(base) }
+                )
+                .share()
+        }
     }
 
     override fun setExchangeRates(exchangeRates: List<ExchangeRate>, base: Currency) {
@@ -34,4 +40,5 @@ class DefaultExchangeRatesRepository(
             .doOnSuccess { if (it is Success) setExchangeRates(it.result, base) }
             .ignoreElement()
     }
+
 }
