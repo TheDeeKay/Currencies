@@ -26,3 +26,22 @@ class ErrorWrapperNetworkRequest<T, in P, E>(
             }
     }
 }
+
+fun <T, P, E> NetworkRequest<T, P, NetworkFailure<E>>.wrapGenericErrors(
+    errorWrapperNetworkRequestFactory: ErrorWrapperNetworkRequestFactory
+): NetworkRequest<T, P, NetworkFailure<E>> {
+    return errorWrapperNetworkRequestFactory.createWrapper(this)
+}
+
+class ErrorWrapperNetworkRequestFactory(
+    private val connectionChecker: ConnectivityChecker
+) {
+    fun <T, P, E> createWrapper(
+        networkRequest: NetworkRequest<T, P, NetworkFailure<E>>
+    ): NetworkRequest<T, P, NetworkFailure<E>> {
+        return ErrorWrapperNetworkRequest(
+            connectionChecker,
+            networkRequest
+        )
+    }
+}
