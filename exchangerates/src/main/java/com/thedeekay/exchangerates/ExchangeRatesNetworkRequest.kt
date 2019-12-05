@@ -10,7 +10,7 @@ import com.thedeekay.exchangerates.ExchangeRatesFailure.InvalidBase
 import com.thedeekay.networking.NetworkFailure.Generic.Unknown
 import com.thedeekay.networking.NetworkFailure.Specific
 import com.thedeekay.networking.NetworkRequest
-import com.thedeekay.networking.defaultNetworkRequest
+import com.thedeekay.networking.requestdecorators.defaultNetworkRequest
 import java.util.*
 
 /**

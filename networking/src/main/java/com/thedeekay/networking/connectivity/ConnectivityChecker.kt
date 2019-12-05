@@ -1,4 +1,4 @@
-package com.thedeekay.networking
+package com.thedeekay.networking.connectivity
 
 /**
  * Checker for whether there is an internet connection or not at the time.

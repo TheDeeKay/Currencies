@@ -1,8 +1,11 @@
-package com.thedeekay.networking
+package com.thedeekay.networking.requestdecorators
 
 import com.thedeekay.commons.Outcome
 import com.thedeekay.commons.Outcome.Failure
+import com.thedeekay.networking.NetworkFailure
 import com.thedeekay.networking.NetworkFailure.Generic.*
+import com.thedeekay.networking.NetworkRequest
+import com.thedeekay.networking.connectivity.ConnectivityChecker
 import io.reactivex.Single
 import java.net.SocketTimeoutException
 

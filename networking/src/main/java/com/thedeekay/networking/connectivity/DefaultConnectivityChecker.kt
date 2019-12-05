@@ -1,4 +1,4 @@
-package com.thedeekay.networking
+package com.thedeekay.networking.connectivity
 
 import android.content.Context
 import android.net.ConnectivityManager

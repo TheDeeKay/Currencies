@@ -4,6 +4,8 @@ import com.thedeekay.commons.Outcome.Failure
 import com.thedeekay.commons.Outcome.Success
 import com.thedeekay.networking.NetworkFailure.Generic.*
 import com.thedeekay.networking.NetworkFailure.Specific
+import com.thedeekay.networking.connectivity.FakeConnectivityChecker
+import com.thedeekay.networking.requestdecorators.ErrorWrapperNetworkRequest
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
@@ -17,10 +19,15 @@ class ErrorWrapperNetworkRequestTest {
 
     @Before
     fun setUp() {
-        connectivityChecker = FakeConnectivityChecker()
+        connectivityChecker =
+            FakeConnectivityChecker()
         wrappedRequest = FakeNetworkRequest { Failure(Unknown) }
 
-        wrapper = ErrorWrapperNetworkRequest(connectivityChecker, wrappedRequest)
+        wrapper =
+            ErrorWrapperNetworkRequest(
+                connectivityChecker,
+                wrappedRequest
+            )
     }
 
     @Test
