@@ -1,9 +1,10 @@
 package com.thedeekay.networking
 
-import com.thedeekay.commons.Outcome
 import com.thedeekay.commons.Outcome.Failure
+import com.thedeekay.commons.Outcome.Success
 import com.thedeekay.networking.NetworkFailure.Generic.*
 import com.thedeekay.networking.NetworkFailure.Specific
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import java.io.IOException
@@ -44,7 +45,7 @@ class ErrorWrapperNetworkRequestTest {
 
     @Test
     fun `successful requests should return unchanged result`() {
-        val success = Outcome.Success(Any())
+        val success = Success(Any())
         wrappedRequest.outcome = { success }
 
         wrapper.execute(Any()).test()
@@ -99,5 +100,16 @@ class ErrorWrapperNetworkRequestTest {
         wrapper.execute(Any()).test()
 
             .assertResult(Failure(Unknown))
+    }
+
+    @Test
+    fun `wrapper should forward parameters it receives`() {
+        val expectedParams = IllegalStateException()
+        wrappedRequest.outcome = { params ->
+            if (params != expectedParams) fail()
+            Success(Any())
+        }
+
+        wrapper.execute(expectedParams).subscribe()
     }
 }
