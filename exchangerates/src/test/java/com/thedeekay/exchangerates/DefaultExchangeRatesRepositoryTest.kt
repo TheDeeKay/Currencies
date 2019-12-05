@@ -61,10 +61,6 @@ class DefaultExchangeRatesRepositoryTest {
             .assertValue { it.sameElementsAs(EUR_EXCHANGE_RATES) }
             .assertNotComplete()
     }
-
-    private fun <T> List<T>.sameElementsAs(
-        other: List<T>
-    ) = containsAll(other) && other.containsAll(this)
 }
 
 private val EUR_EXCHANGE_RATES = listOf(
@@ -72,3 +68,7 @@ private val EUR_EXCHANGE_RATES = listOf(
     EUR / GBP at 0.8103,
     EUR / CHF at 1.0213
 )
+
+private fun <T> List<T>.sameElementsAs(
+    other: List<T>
+) = containsAll(other) && other.containsAll(this)
