@@ -6,10 +6,10 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.thedeekay.commons.Outcome.Failure
 import com.thedeekay.commons.Outcome.Success
 import com.thedeekay.domain.*
-import com.thedeekay.networking.FakeNetworkRequest
 import com.thedeekay.networking.NetworkFailure.Generic.Unknown
 import com.thedeekay.rxtestutils.assertValueHasSameElementsAs
 import com.thedeekay.rxtestutils.assertValuesHaveSameElementsAs
+import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.reactivex.Single
@@ -124,17 +124,20 @@ class DefaultExchangeRatesRepositoryTest {
     ////////////////////////////
 
     @Test
-    fun `subscribing to empty repository should fetch rates for the given base and skip empty emission`() {
+    fun `subscribing to repository should emit current rates and fetch rates for the given base`() {
+        repository.setExchangeRates(EUR_EXCHANGE_RATES, EUR)
         every { exchangeRatesNetworkRequest.execute(ExchangeRatesRequestParams(EUR)) }
-            .returns(Single.just(Success(EUR_EXCHANGE_RATES)))
+            .returns(Single.just(Success(EUR_EXCHANGE_RATES2)))
+        confirmVerified()
 
         repository.allExchangeRates(EUR).test()
 
-            .assertValueHasSameElementsAs(EUR_EXCHANGE_RATES)
+            .assertValuesHaveSameElementsAs(EUR_EXCHANGE_RATES, EUR_EXCHANGE_RATES2)
             .assertNoErrors()
             .assertNotComplete()
     }
 }
+// TODO: see how errors should be propagated from the repository
 
 private val EUR_EXCHANGE_RATES = listOf(
     EUR / USD at 1.1082,
@@ -153,6 +156,3 @@ private val USD_EXCHANGE_RATES = listOf(
     USD / GBP at 0.77164,
     USD / CHF at 0.9686
 )
-
-private typealias ExchangeRatesFakeRequest =
-        FakeNetworkRequest<List<ExchangeRate>, ExchangeRatesRequestParams, ExchangeRatesFailure>
