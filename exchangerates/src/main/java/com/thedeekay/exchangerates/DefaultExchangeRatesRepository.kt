@@ -2,6 +2,7 @@ package com.thedeekay.exchangerates
 
 import com.thedeekay.commons.Outcome.Success
 import com.thedeekay.domain.ExchangeRate
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import java.util.*
 import java.util.concurrent.TimeUnit.SECONDS
@@ -19,21 +20,18 @@ class DefaultExchangeRatesRepository(
     override fun allExchangeRates(base: Currency): Flowable<List<ExchangeRate>> {
         return exchangeRatesDao.allExchangeRates(base)
             .mergeWith(
-                exchangeRatesNetworkRequest.execute(ExchangeRatesRequestParams(base))
-                    .doOnSuccess { if (it is Success) setExchangeRates(it.result, base) }
-                    .ignoreElement()
-            )
-            .mergeWith(
-                Flowable.interval(1, SECONDS)
-                    .flatMapCompletable {
-                        exchangeRatesNetworkRequest.execute(ExchangeRatesRequestParams(base))
-                            .doOnSuccess { if (it is Success) setExchangeRates(it.result, base) }
-                            .ignoreElement()
-                    }
+                Flowable.interval(0, 1, SECONDS)
+                    .flatMapCompletable { fetchRates(base) }
             )
     }
 
     override fun setExchangeRates(exchangeRates: List<ExchangeRate>, base: Currency) {
         exchangeRatesDao.insertExchangeRates(exchangeRates, base)
+    }
+
+    private fun fetchRates(base: Currency): Completable {
+        return exchangeRatesNetworkRequest.execute(ExchangeRatesRequestParams(base))
+            .doOnSuccess { if (it is Success) setExchangeRates(it.result, base) }
+            .ignoreElement()
     }
 }

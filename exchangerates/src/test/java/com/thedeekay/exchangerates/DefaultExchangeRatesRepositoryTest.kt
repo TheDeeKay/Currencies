@@ -145,8 +145,11 @@ class DefaultExchangeRatesRepositoryTest {
         repository.setExchangeRates(EUR_EXCHANGE_RATES, EUR)
         every { exchangeRatesNetworkRequest.execute(ExchangeRatesRequestParams(EUR)) }
             .returns(Single.just(Success(EUR_EXCHANGE_RATES2)))
+        val testSubscriber = repository.allExchangeRates(EUR).test()
 
-        repository.allExchangeRates(EUR).test()
+        computationTestScheduler.triggerActions()
+
+        testSubscriber
 
             .assertValuesHaveSameElementsAs(EUR_EXCHANGE_RATES, EUR_EXCHANGE_RATES2)
             .assertNoErrors()
