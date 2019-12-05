@@ -8,6 +8,7 @@ import com.thedeekay.networking.NetworkRequest
 import com.thedeekay.networking.connectivity.ConnectivityChecker
 import io.reactivex.Single
 import java.net.SocketTimeoutException
+import javax.inject.Inject
 
 /**
  * Decorator for [NetworkRequest] that handles generic errors and wraps specific ones.
@@ -36,7 +37,7 @@ fun <T, P, E> NetworkRequest<T, P, NetworkFailure<E>>.wrapGenericErrors(
     return errorWrapperNetworkRequestFactory.createWrapper(this)
 }
 
-class ErrorWrapperNetworkRequestFactory(
+class ErrorWrapperNetworkRequestFactory @Inject constructor(
     private val connectionChecker: ConnectivityChecker
 ) {
     fun <T, P, E> createWrapper(

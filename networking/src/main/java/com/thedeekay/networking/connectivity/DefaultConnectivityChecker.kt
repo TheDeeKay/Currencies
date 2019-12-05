@@ -2,11 +2,12 @@ package com.thedeekay.networking.connectivity
 
 import android.content.Context
 import android.net.ConnectivityManager
+import javax.inject.Inject
 
 /**
  * Default implementation of [ConnectivityChecker], based on Android's system services.
  */
-class DefaultConnectivityChecker(
+class DefaultConnectivityChecker @Inject constructor(
     context: Context
 ) : ConnectivityChecker {
     private val connectivityManager: ConnectivityManager =

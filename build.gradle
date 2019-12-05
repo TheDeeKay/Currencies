@@ -35,6 +35,8 @@ ext {
 
     // RxJava
     rxJavaVersion = '2.2.15'
+
+    javaxInjectVersion = '1'
 }
 
 allprojects {

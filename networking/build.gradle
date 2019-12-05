@@ -28,6 +28,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     api project(path: ':commons')
 
+    api "javax.inject:javax.inject:$javaxInjectVersion"
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     api "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
