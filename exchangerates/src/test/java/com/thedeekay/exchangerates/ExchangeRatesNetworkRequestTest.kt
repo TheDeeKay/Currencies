@@ -8,6 +8,8 @@ import com.thedeekay.domain.*
 import com.thedeekay.exchangerates.ExchangeRatesFailure.InvalidBase
 import com.thedeekay.networking.NetworkFailure.Generic.Unknown
 import com.thedeekay.networking.NetworkFailure.Specific
+import com.thedeekay.networking.connectivity.FakeConnectivityChecker
+import com.thedeekay.networking.requestdecorators.ErrorWrapperNetworkRequestFactory
 import com.thedeekay.retrofittestutils.forRequest
 import com.thedeekay.retrofittestutils.respondWith
 import com.thedeekay.rxtestutils.RxJavaSchedulersRule
@@ -36,7 +38,10 @@ class ExchangeRatesNetworkRequestTest {
 
         val retrofit = createRetrofit(baseUrl = server.url(""))
         val exchangeRatesService = retrofit.create(ExchangeRatesService::class.java)
-        request = ExchangeRatesNetworkRequest(exchangeRatesService)
+        val errorWrapperNetworkRequestFactory =
+            ErrorWrapperNetworkRequestFactory(FakeConnectivityChecker())
+        request =
+            ExchangeRatesNetworkRequest(exchangeRatesService, errorWrapperNetworkRequestFactory)
     }
 
     @After
