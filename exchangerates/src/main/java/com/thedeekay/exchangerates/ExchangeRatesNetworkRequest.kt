@@ -10,7 +10,9 @@ import com.thedeekay.exchangerates.ExchangeRatesFailure.InvalidBase
 import com.thedeekay.networking.NetworkFailure.Generic.Unknown
 import com.thedeekay.networking.NetworkFailure.Specific
 import com.thedeekay.networking.NetworkRequest
+import com.thedeekay.networking.requestdecorators.ErrorWrapperNetworkRequestFactory
 import com.thedeekay.networking.requestdecorators.defaultNetworkRequest
+import com.thedeekay.networking.requestdecorators.wrapGenericErrors
 import java.util.*
 import javax.inject.Inject
 
@@ -19,9 +21,10 @@ import javax.inject.Inject
  * currencies.
  */
 class ExchangeRatesNetworkRequest @Inject internal constructor(
-    private val exchangeRatesService: ExchangeRatesService
+    private val exchangeRatesService: ExchangeRatesService,
+    private val errorWrapperNetworkRequestFactory: ErrorWrapperNetworkRequestFactory
 ) : NetworkRequest<List<ExchangeRate>, ExchangeRatesRequestParams, ExchangeRatesFailure>
-by defaultNetworkRequest({ params ->
+by defaultNetworkRequest<List<ExchangeRate>, ExchangeRatesRequestParams, ExchangeRatesFailure>({ params ->
 
     exchangeRatesService.fetchAllExchangeRates(params.base.currencyCode)
         .map { response ->
@@ -42,6 +45,7 @@ by defaultNetworkRequest({ params ->
             }
         }
 })
+    .wrapGenericErrors(errorWrapperNetworkRequestFactory)
 
 data class ExchangeRatesRequestParams(val base: Currency)
 
