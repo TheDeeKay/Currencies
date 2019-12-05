@@ -1,5 +1,6 @@
 package com.thedeekay.networking
 
+import com.thedeekay.commons.Outcome
 import com.thedeekay.commons.Outcome.Failure
 import com.thedeekay.networking.NetworkFailure.Generic.NoInternet
 import com.thedeekay.networking.NetworkFailure.Generic.Unknown
@@ -38,5 +39,15 @@ class ErrorWrapperNetworkRequestTest {
         wrapper.execute(Any()).test()
 
             .assertResult(Failure(error))
+    }
+
+    @Test
+    fun `successful requests should return unchanged result`() {
+        val success = Outcome.Success(Any())
+        wrappedRequest.outcome = { success }
+
+        wrapper.execute(Any()).test()
+
+            .assertResult(success)
     }
 }
