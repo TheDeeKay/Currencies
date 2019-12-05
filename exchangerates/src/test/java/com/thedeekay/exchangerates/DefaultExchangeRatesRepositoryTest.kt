@@ -4,8 +4,12 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.thedeekay.domain.*
+import com.thedeekay.networking.FakeNetworkRequest
 import com.thedeekay.rxtestutils.assertValueHasSameElementsAs
 import com.thedeekay.rxtestutils.assertValuesHaveSameElementsAs
+import io.mockk.every
+import io.mockk.mockk
+import io.reactivex.Single
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -20,6 +24,7 @@ class DefaultExchangeRatesRepositoryTest {
     @get:Rule
     val instantTaskExecutorRule: InstantTaskExecutorRule = InstantTaskExecutorRule()
 
+    private lateinit var exchangeRatesNetworkRequest: ExchangeRatesNetworkRequest
     private lateinit var repository: DefaultExchangeRatesRepository
 
     @Before
@@ -30,7 +35,11 @@ class DefaultExchangeRatesRepositoryTest {
         )
             .allowMainThreadQueries()
             .build()
-        repository = DefaultExchangeRatesRepository(exchangeRatesDatabase)
+
+        exchangeRatesNetworkRequest = mockk()
+        every { exchangeRatesNetworkRequest.execute(any()) }.returns(Single.never())
+
+        repository = DefaultExchangeRatesRepository(exchangeRatesDatabase, exchangeRatesNetworkRequest)
     }
 
     ///////////////////////////////
@@ -104,7 +113,11 @@ class DefaultExchangeRatesRepositoryTest {
     // NETWORK-FETCHING TESTS //
     ////////////////////////////
 
+    @Test
+    fun `subscribing to empty repository should fetch rates for the given base`() {
+        val testSubscriber = repository.allExchangeRates(EUR).test()
 
+    }
 }
 
 private val EUR_EXCHANGE_RATES = listOf(
@@ -124,3 +137,6 @@ private val USD_EXCHANGE_RATES = listOf(
     USD / GBP at 0.77164,
     USD / CHF at 0.9686
 )
+
+private typealias ExchangeRatesFakeRequest =
+        FakeNetworkRequest<List<ExchangeRate>, ExchangeRatesRequestParams, ExchangeRatesFailure>

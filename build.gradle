@@ -24,13 +24,13 @@ ext {
     retrofitVersion = '2.6.2'
     moshiVersion = '1.9.2'
 
-    // JUnit
-    jUnitVersion = '4.12'
     // test
+    jUnitVersion = '4.12'
     mockWebServerVersion = '4.2.1'
     robolectricVersion = '4.3.1'
     androidxCoreVersion = '1.0.0'
     archTestCoreVersion = '2.0.1'
+    mockkVersion = '1.9'
 
     // Android test
     jUnitExtVersion = '1.1.1'

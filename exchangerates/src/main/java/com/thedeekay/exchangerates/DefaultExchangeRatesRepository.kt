@@ -8,7 +8,8 @@ import java.util.*
  * Default implementation of [ExchangeRatesRepository] using Room.
  */
 class DefaultExchangeRatesRepository(
-    exchangeRatesDatabase: ExchangeRatesDatabase
+    exchangeRatesDatabase: ExchangeRatesDatabase,
+    exchangeRatesNetworkRequest: ExchangeRatesNetworkRequest
 ) : ExchangeRatesRepository {
 
     private val exchangeRatesDao = exchangeRatesDatabase.exchangeRates()

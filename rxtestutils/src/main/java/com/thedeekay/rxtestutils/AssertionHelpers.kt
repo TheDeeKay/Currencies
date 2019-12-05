@@ -8,7 +8,7 @@ fun <T> TestSubscriber<List<T>>.assertValueHasSameElementsAs(other: List<T>): Te
 }
 
 fun <T> TestSubscriber<List<T>>.assertValuesHaveSameElementsAs(vararg other: List<T>): TestSubscriber<List<T>> {
-    return other.foldRightIndexed(this) { index, list, acc ->
+    return other.foldRightIndexed(initial = this) { index, list, acc ->
         acc.assertValueAt(index) { it.hasSameElementsAs(list) }
     }
 }
