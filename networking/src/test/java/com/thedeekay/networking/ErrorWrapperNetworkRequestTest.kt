@@ -2,8 +2,7 @@ package com.thedeekay.networking
 
 import com.thedeekay.commons.Outcome
 import com.thedeekay.commons.Outcome.Failure
-import com.thedeekay.networking.NetworkFailure.Generic.NoInternet
-import com.thedeekay.networking.NetworkFailure.Generic.Unknown
+import com.thedeekay.networking.NetworkFailure.Generic.*
 import com.thedeekay.networking.NetworkFailure.Specific
 import org.junit.Before
 import org.junit.Test
@@ -49,5 +48,35 @@ class ErrorWrapperNetworkRequestTest {
         wrapper.execute(Any()).test()
 
             .assertResult(success)
+    }
+
+    @Test
+    fun `NoInternet failure should not be wrapped into Specific`() {
+        val noInternet = Failure(NoInternet)
+        wrappedRequest.outcome = { noInternet }
+
+        wrapper.execute(Any()).test()
+
+            .assertResult(noInternet)
+    }
+
+    @Test
+    fun `Timeout failure should not be wrapped into Specific`() {
+        val timeout = Failure(Timeout)
+        wrappedRequest.outcome = { timeout }
+
+        wrapper.execute(Any()).test()
+
+            .assertResult(timeout)
+    }
+
+    @Test
+    fun `Unknown failure should not be wrapped into Specific`() {
+        val unknown = Failure(Unknown)
+        wrappedRequest.outcome = { unknown }
+
+        wrapper.execute(Any()).test()
+
+            .assertResult(unknown)
     }
 }
