@@ -15,6 +15,8 @@ import java.util.*
  * In this example, base currency is EUR, counter currency is USD, and rate is 1.1082.
  * This means you can buy 1.1082USD by selling 1EUR, and vice-versa.
  */
+// TODO: seems that most places that create this are creating by converting Double to BigDecimal, which loses precision
+// create by converting String to BigDecimal instead
 data class ExchangeRate(
     val base: Currency,
     val counter: Currency,

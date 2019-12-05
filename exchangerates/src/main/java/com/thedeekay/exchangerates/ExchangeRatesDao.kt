@@ -3,6 +3,7 @@ package com.thedeekay.exchangerates
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import com.thedeekay.domain.ExchangeRate
 import io.reactivex.Flowable
 import java.util.*
@@ -19,7 +20,13 @@ abstract class ExchangeRatesDao {
     @Insert
     protected abstract fun insertExchangeRateEntities(exchangeRates: List<ExchangeRateEntity>)
 
-    fun insertExchangeRates(exchangeRates: List<ExchangeRate>) {
+    @Query("DELETE FROM exchangeRate")
+    protected abstract fun clearData()
+
+    @Transaction
+    open fun insertExchangeRates(exchangeRates: List<ExchangeRate>) {
+        clearData()
+
         insertExchangeRateEntities(exchangeRates.map { ExchangeRateEntity(it) })
     }
 
