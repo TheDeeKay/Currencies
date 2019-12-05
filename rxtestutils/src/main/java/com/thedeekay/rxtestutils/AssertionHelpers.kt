@@ -1,12 +1,14 @@
 package com.thedeekay.rxtestutils
 
+import com.thedeekay.commons.hasSameElementsAs
 import io.reactivex.subscribers.TestSubscriber
-
-
-private fun <T> List<T>.hasSameElementsAs(
-    other: List<T>
-) = containsAll(other) && other.containsAll(this)
 
 fun <T> TestSubscriber<List<T>>.assertValueHasSameElementsAs(other: List<T>): TestSubscriber<List<T>> {
     return assertValue { it.hasSameElementsAs(other) }
+}
+
+fun <T> TestSubscriber<List<T>>.assertValuesHaveSameElementsAs(vararg other: List<T>): TestSubscriber<List<T>> {
+    return other.foldRightIndexed(this) { index, list, acc ->
+        acc.assertValueAt(index) { it.hasSameElementsAs(list) }
+    }
 }

@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.thedeekay.domain.*
 import com.thedeekay.rxtestutils.assertValueHasSameElementsAs
+import com.thedeekay.rxtestutils.assertValuesHaveSameElementsAs
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -79,6 +80,18 @@ class DefaultExchangeRatesRepositoryTest {
         repository.allExchangeRates(EUR).test()
 
             .assertValueHasSameElementsAs(EUR_EXCHANGE_RATES)
+            .assertNotComplete()
+    }
+
+    @Test
+    fun `storing new rates emits them immediately`() {
+        repository.setExchangeRates(EUR_EXCHANGE_RATES, EUR)
+        val testSubscriber = repository.allExchangeRates(EUR).test()
+
+        repository.setExchangeRates(EUR_EXCHANGE_RATES2, EUR)
+
+        testSubscriber
+            .assertValuesHaveSameElementsAs(EUR_EXCHANGE_RATES, EUR_EXCHANGE_RATES2)
             .assertNotComplete()
     }
 }
