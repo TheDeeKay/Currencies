@@ -169,6 +169,33 @@ class DefaultExchangeRatesRepositoryTest {
             .assertNoErrors()
             .assertNotComplete()
     }
+
+    @Test
+    fun `repository should fetch 4 rates in 3 seconds`() {
+        every { exchangeRatesNetworkRequest.execute(ExchangeRatesRequestParams(EUR)) }
+            .returnsMany(
+                Single.just(Success(EUR_EXCHANGE_RATES)),
+                Single.just(Success(EUR_EXCHANGE_RATES2)),
+                Single.just(Success(EUR_EXCHANGE_RATES)),
+                Single.just(Success(EUR_EXCHANGE_RATES2))
+            )
+        val testSubscriber = repository.allExchangeRates(EUR).test()
+
+        computationTestScheduler.advanceTimeBy(3, SECONDS)
+
+        testSubscriber
+            .assertValuesHaveSameElementsAs(
+                emptyList(),
+                EUR_EXCHANGE_RATES,
+                EUR_EXCHANGE_RATES2,
+                EUR_EXCHANGE_RATES,
+                EUR_EXCHANGE_RATES2
+            )
+            .assertNoErrors()
+            .assertNotComplete()
+    }
+
+
 }
 // TODO: see how errors should be propagated from the repository
 
