@@ -6,6 +6,7 @@ import com.thedeekay.networking.NetworkFailure.Generic.*
 import com.thedeekay.networking.NetworkFailure.Specific
 import org.junit.Before
 import org.junit.Test
+import java.io.IOException
 import java.net.SocketTimeoutException
 
 class ErrorWrapperNetworkRequestTest {
@@ -88,5 +89,15 @@ class ErrorWrapperNetworkRequestTest {
         wrapper.execute(Any()).test()
 
             .assertResult(Failure(Timeout))
+    }
+
+    @Test
+    fun `IO exceptions are caught as Unknown`() {
+        val ioException = IOException()
+        wrappedRequest.outcome = { throw ioException }
+
+        wrapper.execute(Any()).test()
+
+            .assertResult(Failure(Unknown))
     }
 }

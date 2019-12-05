@@ -2,9 +2,9 @@ package com.thedeekay.networking
 
 import com.thedeekay.commons.Outcome
 import com.thedeekay.commons.Outcome.Failure
-import com.thedeekay.networking.NetworkFailure.Generic.NoInternet
-import com.thedeekay.networking.NetworkFailure.Generic.Timeout
+import com.thedeekay.networking.NetworkFailure.Generic.*
 import io.reactivex.Single
+import java.net.SocketTimeoutException
 
 /**
  * Decorator for [NetworkRequest] that handles generic errors and wraps specific ones.
@@ -19,7 +19,10 @@ class ErrorWrapperNetworkRequest<T, in P, E>(
             .flatMap { hasConnectivity ->
                 if (hasConnectivity.not()) Single.just(Failure(NoInternet))
                 else wrappedRequest.execute(params)
-                    .onErrorReturn { (Failure(Timeout)) }
+                    .onErrorReturn { error ->
+                        if (error is SocketTimeoutException) Failure(Timeout)
+                        else Failure(Unknown)
+                    }
             }
     }
 }
