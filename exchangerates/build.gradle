@@ -23,6 +23,12 @@ android {
         }
     }
 
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+
 }
 
 dependencies {
@@ -36,6 +42,11 @@ dependencies {
     implementation "com.google.dagger:dagger:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
+    // Room
+    implementation "androidx.room:room-runtime:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+    implementation "androidx.room:room-rxjava2:$roomVersion"
+
     // network
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
@@ -47,4 +58,7 @@ dependencies {
     testImplementation "junit:junit:$jUnitVersion"
     testImplementation project(path: ':okhttptestutils')
     testImplementation project(path: ':rxtestutils')
+    testImplementation "org.robolectric:robolectric:$robolectricVersion"
+    testImplementation "androidx.test:core:$androidxCoreVersion"
+    testImplementation "androidx.arch.core:core-testing:$archTestCoreVersion"
 }
