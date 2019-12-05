@@ -2,7 +2,7 @@ package com.thedeekay.networking
 
 import com.thedeekay.commons.Outcome
 import io.reactivex.Single
-import io.reactivex.Single.just
+import io.reactivex.Single.fromCallable
 import io.reactivex.schedulers.Schedulers
 
 /**
@@ -25,8 +25,8 @@ interface NetworkRequest<T, in P, E> {
 class FakeNetworkRequest<T, P, E>(
     var outcome: (P) -> Outcome<T, NetworkFailure<E>>
 ) : NetworkRequest<T, P, E> {
-    override fun execute(params: P): Single<Outcome<T, NetworkFailure<E>>> = just(outcome(params))
-
+    override fun execute(params: P): Single<Outcome<T, NetworkFailure<E>>> =
+        fromCallable { outcome(params) }
 }
 
 /**

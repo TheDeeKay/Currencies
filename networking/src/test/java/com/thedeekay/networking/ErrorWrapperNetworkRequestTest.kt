@@ -6,6 +6,7 @@ import com.thedeekay.networking.NetworkFailure.Generic.*
 import com.thedeekay.networking.NetworkFailure.Specific
 import org.junit.Before
 import org.junit.Test
+import java.net.SocketTimeoutException
 
 class ErrorWrapperNetworkRequestTest {
 
@@ -78,5 +79,14 @@ class ErrorWrapperNetworkRequestTest {
         wrapper.execute(Any()).test()
 
             .assertResult(unknown)
+    }
+
+    @Test
+    fun `SocketTimeoutException is mapped to timeout`() {
+        wrappedRequest.outcome = { throw SocketTimeoutException() }
+
+        wrapper.execute(Any()).test()
+
+            .assertResult(Failure(Timeout))
     }
 }

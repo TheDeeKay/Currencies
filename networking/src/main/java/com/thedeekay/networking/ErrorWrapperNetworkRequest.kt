@@ -3,6 +3,7 @@ package com.thedeekay.networking
 import com.thedeekay.commons.Outcome
 import com.thedeekay.commons.Outcome.Failure
 import com.thedeekay.networking.NetworkFailure.Generic.NoInternet
+import com.thedeekay.networking.NetworkFailure.Generic.Timeout
 import io.reactivex.Single
 
 /**
@@ -18,6 +19,7 @@ class ErrorWrapperNetworkRequest<T, in P, E>(
             .flatMap { hasConnectivity ->
                 if (hasConnectivity.not()) Single.just(Failure(NoInternet))
                 else wrappedRequest.execute(params)
+                    .onErrorReturn { (Failure(Timeout)) }
             }
     }
 }
