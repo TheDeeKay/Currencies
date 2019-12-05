@@ -3,10 +3,7 @@ package com.thedeekay.exchangerates
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
-import com.thedeekay.domain.EUR
-import com.thedeekay.domain.GBP
-import com.thedeekay.domain.USD
-import com.thedeekay.domain.div
+import com.thedeekay.domain.*
 import com.thedeekay.rxtestutils.RxJavaSchedulersRule
 import org.junit.Before
 import org.junit.Rule
@@ -57,15 +54,11 @@ class DefaultExchangeRatesRepositoryTest {
 
     @Test
     fun `storing several exchange rates should emit those same exchange rates`() {
-        val exchangeRates = listOf(
-            EUR / USD at 1.1082,
-            EUR / GBP at 0.8103
-        )
-        repository.setExchangeRates(exchangeRates, EUR)
+        repository.setExchangeRates(EUR_EXCHANGE_RATES, EUR)
 
         repository.allExchangeRates(EUR).test()
 
-            .assertValue { it.sameElementsAs(exchangeRates) }
+            .assertValue { it.sameElementsAs(EUR_EXCHANGE_RATES) }
             .assertNotComplete()
     }
 
@@ -73,3 +66,9 @@ class DefaultExchangeRatesRepositoryTest {
         other: List<T>
     ) = containsAll(other) && other.containsAll(this)
 }
+
+private val EUR_EXCHANGE_RATES = listOf(
+    EUR / USD at 1.1082,
+    EUR / GBP at 0.8103,
+    EUR / CHF at 1.0213
+)
