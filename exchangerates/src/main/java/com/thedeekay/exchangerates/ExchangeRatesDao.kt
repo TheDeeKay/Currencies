@@ -20,12 +20,12 @@ abstract class ExchangeRatesDao {
     @Insert
     protected abstract fun insertExchangeRateEntities(exchangeRates: List<ExchangeRateEntity>)
 
-    @Query("DELETE FROM exchangeRate")
-    protected abstract fun clearData()
+    @Query("DELETE FROM exchangeRate WHERE base = :base")
+    protected abstract fun clearDataForBase(base: Currency)
 
     @Transaction
-    open fun insertExchangeRates(exchangeRates: List<ExchangeRate>) {
-        clearData()
+    open fun insertExchangeRates(exchangeRates: List<ExchangeRate>, base: Currency) {
+        clearDataForBase(base)
 
         insertExchangeRateEntities(exchangeRates.map { ExchangeRateEntity(it) })
     }

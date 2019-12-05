@@ -72,6 +72,17 @@ class DefaultExchangeRatesRepositoryTest {
             .assertValue { it.sameElementsAs(EUR_EXCHANGE_RATES2) }
             .assertNotComplete()
     }
+
+    @Test
+    fun `storing new rates should not clear existing ones for different base`() {
+        repository.setExchangeRates(EUR_EXCHANGE_RATES, EUR)
+        repository.setExchangeRates(USD_EXCHANGE_RATES, USD)
+
+        repository.allExchangeRates(EUR).test()
+
+            .assertValue { it.sameElementsAs(EUR_EXCHANGE_RATES) }
+            .assertNotComplete()
+    }
 }
 
 private val EUR_EXCHANGE_RATES = listOf(
@@ -84,6 +95,12 @@ private val EUR_EXCHANGE_RATES2 = listOf(
     EUR / USD at 1.1100,
     EUR / RUB at 79.814,
     EUR / JPY at 129.94
+)
+
+private val USD_EXCHANGE_RATES = listOf(
+    USD / EUR at 0.85906,
+    USD / GBP at 0.77164,
+    USD / CHF at 0.9686
 )
 
 private fun <T> List<T>.sameElementsAs(

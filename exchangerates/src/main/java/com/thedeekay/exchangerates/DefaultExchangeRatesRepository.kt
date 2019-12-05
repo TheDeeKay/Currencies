@@ -15,6 +15,6 @@ class DefaultExchangeRatesRepository(
     }
 
     override fun setExchangeRates(exchangeRates: List<ExchangeRate>, base: Currency) {
-        exchangeRatesDao.insertExchangeRates(exchangeRates)
+        exchangeRatesDao.insertExchangeRates(exchangeRates, base)
     }
 }
