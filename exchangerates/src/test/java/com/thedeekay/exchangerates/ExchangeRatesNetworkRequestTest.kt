@@ -21,7 +21,6 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-// TODO: add RxJava rule for schedulers
 // TODO: do something with potentially uncaught RxJava exceptions
 class ExchangeRatesNetworkRequestTest {
 
