@@ -1,5 +1,6 @@
 package com.thedeekay.exchangerates
 
+import com.thedeekay.domain.EUR
 import org.junit.Test
 
 class DefaultExchangeRatesRepositoryTest {
@@ -7,9 +8,9 @@ class DefaultExchangeRatesRepositoryTest {
     @Test
     fun `exchange rates are empty when empty list is set`() {
         val repository = DefaultExchangeRatesRepository()
-        repository.setExchangeRates(emptyList())
+        repository.setExchangeRates(emptyList(), EUR)
 
-        repository.allExchangeRates().test()
+        repository.allExchangeRates(EUR).test()
 
             .assertValue(emptyList())
             .assertNotComplete()
