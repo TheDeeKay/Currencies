@@ -1,4 +1,4 @@
-package com.thedeekay.exchangerates
+package com.thedeekay.exchangerates.storage
 
 import androidx.room.TypeConverter
 import com.thedeekay.domain.Currency

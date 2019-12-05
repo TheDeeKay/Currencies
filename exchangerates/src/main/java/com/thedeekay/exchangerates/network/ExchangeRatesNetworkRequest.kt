@@ -1,4 +1,4 @@
-package com.thedeekay.exchangerates
+package com.thedeekay.exchangerates.network
 
 import com.squareup.moshi.Json
 import com.thedeekay.commons.Outcome.Failure
@@ -6,7 +6,7 @@ import com.thedeekay.commons.Outcome.Success
 import com.thedeekay.domain.Currency
 import com.thedeekay.domain.ExchangeRate
 import com.thedeekay.domain.div
-import com.thedeekay.exchangerates.ExchangeRatesFailure.InvalidBase
+import com.thedeekay.exchangerates.network.ExchangeRatesFailure.InvalidBase
 import com.thedeekay.networking.NetworkFailure.Generic.Unknown
 import com.thedeekay.networking.NetworkFailure.Specific
 import com.thedeekay.networking.NetworkRequest

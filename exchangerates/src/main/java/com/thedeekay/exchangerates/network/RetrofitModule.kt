@@ -1,4 +1,4 @@
-package com.thedeekay.exchangerates
+package com.thedeekay.exchangerates.network
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory

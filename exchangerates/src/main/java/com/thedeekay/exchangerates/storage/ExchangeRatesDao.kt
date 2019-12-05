@@ -1,4 +1,4 @@
-package com.thedeekay.exchangerates
+package com.thedeekay.exchangerates.storage
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -27,7 +27,11 @@ internal abstract class ExchangeRatesDao {
     open fun insertExchangeRates(exchangeRates: List<ExchangeRate>, base: Currency) {
         clearDataForBase(base)
 
-        insertExchangeRateEntities(exchangeRates.map { ExchangeRateEntity(it) })
+        insertExchangeRateEntities(exchangeRates.map {
+            ExchangeRateEntity(
+                it
+            )
+        })
     }
 
 }

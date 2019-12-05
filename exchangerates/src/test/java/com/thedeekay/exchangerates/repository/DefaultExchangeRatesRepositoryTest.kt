@@ -1,4 +1,4 @@
-package com.thedeekay.exchangerates
+package com.thedeekay.exchangerates.repository
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
@@ -6,6 +6,9 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.thedeekay.commons.Outcome.Failure
 import com.thedeekay.commons.Outcome.Success
 import com.thedeekay.domain.*
+import com.thedeekay.exchangerates.network.ExchangeRatesNetworkRequest
+import com.thedeekay.exchangerates.network.ExchangeRatesRequestParams
+import com.thedeekay.exchangerates.storage.ExchangeRatesDatabase
 import com.thedeekay.networking.NetworkFailure.Generic.Unknown
 import com.thedeekay.rxtestutils.assertValueHasSameElementsAs
 import com.thedeekay.rxtestutils.assertValuesHaveSameElementsAs
@@ -55,7 +58,10 @@ class DefaultExchangeRatesRepositoryTest {
         every { exchangeRatesNetworkRequest.execute(any()) }.returns(Single.just(Failure(Unknown)))
 
         repository =
-            DefaultExchangeRatesRepository(exchangeRatesDatabase, exchangeRatesNetworkRequest)
+            DefaultExchangeRatesRepository(
+                exchangeRatesDatabase,
+                exchangeRatesNetworkRequest
+            )
     }
 
     @After
@@ -130,7 +136,10 @@ class DefaultExchangeRatesRepositoryTest {
         repository.setExchangeRates(EUR_EXCHANGE_RATES2, EUR)
 
         testSubscriber
-            .assertValuesHaveSameElementsAs(EUR_EXCHANGE_RATES, EUR_EXCHANGE_RATES2)
+            .assertValuesHaveSameElementsAs(
+                EUR_EXCHANGE_RATES,
+                EUR_EXCHANGE_RATES2
+            )
             .assertNoErrors()
             .assertNotComplete()
     }
@@ -143,7 +152,11 @@ class DefaultExchangeRatesRepositoryTest {
     @Test
     fun `subscribing to repository should emit current rates and fetch rates for the given base`() {
         repository.setExchangeRates(EUR_EXCHANGE_RATES, EUR)
-        every { exchangeRatesNetworkRequest.execute(ExchangeRatesRequestParams(EUR)) }
+        every { exchangeRatesNetworkRequest.execute(
+            ExchangeRatesRequestParams(
+                EUR
+            )
+        ) }
             .returns(Single.just(Success(EUR_EXCHANGE_RATES2)))
         val testSubscriber = repository.allExchangeRates(EUR).test()
 
@@ -151,14 +164,21 @@ class DefaultExchangeRatesRepositoryTest {
 
         testSubscriber
 
-            .assertValuesHaveSameElementsAs(EUR_EXCHANGE_RATES, EUR_EXCHANGE_RATES2)
+            .assertValuesHaveSameElementsAs(
+                EUR_EXCHANGE_RATES,
+                EUR_EXCHANGE_RATES2
+            )
             .assertNoErrors()
             .assertNotComplete()
     }
 
     @Test
     fun `repository should fetch rates every 1 second`() {
-        every { exchangeRatesNetworkRequest.execute(ExchangeRatesRequestParams(EUR)) }
+        every { exchangeRatesNetworkRequest.execute(
+            ExchangeRatesRequestParams(
+                EUR
+            )
+        ) }
             .returnsMany(
                 Single.just(Success(EUR_EXCHANGE_RATES)),
                 Single.just(Success(EUR_EXCHANGE_RATES2))
@@ -168,14 +188,21 @@ class DefaultExchangeRatesRepositoryTest {
         computationTestScheduler.advanceTimeBy(1, SECONDS)
 
         testSubscriber
-            .assertValuesHaveSameElementsAs(emptyList(), EUR_EXCHANGE_RATES, EUR_EXCHANGE_RATES2)
+            .assertValuesHaveSameElementsAs(emptyList(),
+                EUR_EXCHANGE_RATES,
+                EUR_EXCHANGE_RATES2
+            )
             .assertNoErrors()
             .assertNotComplete()
     }
 
     @Test
     fun `repository should fetch 4 rates in 3 seconds`() {
-        every { exchangeRatesNetworkRequest.execute(ExchangeRatesRequestParams(EUR)) }
+        every { exchangeRatesNetworkRequest.execute(
+            ExchangeRatesRequestParams(
+                EUR
+            )
+        ) }
             .returnsMany(
                 Single.just(Success(EUR_EXCHANGE_RATES)),
                 Single.just(Success(EUR_EXCHANGE_RATES2)),

@@ -1,4 +1,4 @@
-package com.thedeekay.exchangerates
+package com.thedeekay.exchangerates.network
 
 import com.thedeekay.networking.connectivity.ConnectivityChecker
 import com.thedeekay.networking.connectivity.DefaultConnectivityChecker

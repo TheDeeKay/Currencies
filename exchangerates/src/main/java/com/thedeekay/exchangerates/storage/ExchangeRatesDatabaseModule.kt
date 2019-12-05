@@ -1,4 +1,4 @@
-package com.thedeekay.exchangerates
+package com.thedeekay.exchangerates.storage
 
 import android.content.Context
 import androidx.room.Room

@@ -1,11 +1,11 @@
-package com.thedeekay.exchangerates
+package com.thedeekay.exchangerates.network
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.thedeekay.commons.Outcome.Failure
 import com.thedeekay.commons.Outcome.Success
 import com.thedeekay.domain.*
-import com.thedeekay.exchangerates.ExchangeRatesFailure.InvalidBase
+import com.thedeekay.exchangerates.network.ExchangeRatesFailure.InvalidBase
 import com.thedeekay.networking.NetworkFailure.Generic.Unknown
 import com.thedeekay.networking.NetworkFailure.Specific
 import com.thedeekay.networking.connectivity.FakeConnectivityChecker
@@ -41,7 +41,10 @@ class ExchangeRatesNetworkRequestTest {
         val errorWrapperNetworkRequestFactory =
             ErrorWrapperNetworkRequestFactory(FakeConnectivityChecker())
         request =
-            ExchangeRatesNetworkRequest(exchangeRatesService, errorWrapperNetworkRequestFactory)
+            ExchangeRatesNetworkRequest(
+                exchangeRatesService,
+                errorWrapperNetworkRequestFactory
+            )
     }
 
     @After
@@ -81,7 +84,11 @@ class ExchangeRatesNetworkRequestTest {
                 setBody(exchangeRatesResponse)
             }
 
-        request.execute(ExchangeRatesRequestParams(EUR)).test()
+        request.execute(
+            ExchangeRatesRequestParams(
+                EUR
+            )
+        ).test()
 
             .assertValue(Success(expectedExchangeRates))
             .assertNoErrors()
@@ -100,7 +107,11 @@ class ExchangeRatesNetworkRequestTest {
                 setBody(exchangeRatesResponse)
             }
 
-        request.execute(ExchangeRatesRequestParams(RSD)).test()
+        request.execute(
+            ExchangeRatesRequestParams(
+                RSD
+            )
+        ).test()
 
             .assertValue(Failure(Specific(InvalidBase(RSD))))
             .assertNoErrors()
@@ -118,7 +129,11 @@ class ExchangeRatesNetworkRequestTest {
                 setBody("")
             }
 
-        request.execute(ExchangeRatesRequestParams(RSD)).test()
+        request.execute(
+            ExchangeRatesRequestParams(
+                RSD
+            )
+        ).test()
 
             .assertValue(Failure(Unknown))
             .assertNoErrors()

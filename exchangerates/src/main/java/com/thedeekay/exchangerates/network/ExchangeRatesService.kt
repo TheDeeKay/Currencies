@@ -1,5 +1,6 @@
-package com.thedeekay.exchangerates
+package com.thedeekay.exchangerates.network
 
+import com.thedeekay.exchangerates.network.ExchangeRatesResponse
 import io.reactivex.Single
 import retrofit2.Response
 import retrofit2.http.GET

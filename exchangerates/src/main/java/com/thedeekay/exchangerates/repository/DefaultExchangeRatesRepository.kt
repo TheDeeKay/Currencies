@@ -1,7 +1,10 @@
-package com.thedeekay.exchangerates
+package com.thedeekay.exchangerates.repository
 
 import com.thedeekay.commons.Outcome.Success
 import com.thedeekay.domain.ExchangeRate
+import com.thedeekay.exchangerates.network.ExchangeRatesNetworkRequest
+import com.thedeekay.exchangerates.network.ExchangeRatesRequestParams
+import com.thedeekay.exchangerates.storage.ExchangeRatesDatabase
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import java.util.*
@@ -39,7 +42,11 @@ internal class DefaultExchangeRatesRepository @Inject constructor(
     }
 
     private fun fetchRates(base: Currency): Completable {
-        return exchangeRatesNetworkRequest.execute(ExchangeRatesRequestParams(base))
+        return exchangeRatesNetworkRequest.execute(
+            ExchangeRatesRequestParams(
+                base
+            )
+        )
             .doOnSuccess { if (it is Success) setExchangeRates(it.result, base) }
             .ignoreElement()
     }

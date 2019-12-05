@@ -1,4 +1,4 @@
-package com.thedeekay.exchangerates
+package com.thedeekay.exchangerates.repository
 
 import com.thedeekay.domain.ExchangeRate
 import io.reactivex.Flowable

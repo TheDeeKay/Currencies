@@ -1,8 +1,8 @@
-package com.thedeekay.exchangerates
+package com.thedeekay.exchangerates.storage
 
 import androidx.room.Entity
 import com.thedeekay.domain.ExchangeRate
-import com.thedeekay.exchangerates.ExchangeRateEntity.Companion.TABLE
+import com.thedeekay.exchangerates.storage.ExchangeRateEntity.Companion.TABLE
 import java.math.BigDecimal
 import java.util.*
 

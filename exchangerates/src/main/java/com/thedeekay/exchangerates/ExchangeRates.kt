@@ -1,6 +1,7 @@
 package com.thedeekay.exchangerates
 
 import android.content.Context
+import com.thedeekay.exchangerates.network.RetrofitModule
 
 object ExchangeRates {
 
@@ -22,7 +23,11 @@ object ExchangeRates {
         DaggerExchangeRatesApiComponent
             .builder()
             .bindContext(context)
-            .retrofitModule(RetrofitModule(BASE_URL))
+            .retrofitModule(
+                RetrofitModule(
+                    BASE_URL
+                )
+            )
             .build()
     }
 
