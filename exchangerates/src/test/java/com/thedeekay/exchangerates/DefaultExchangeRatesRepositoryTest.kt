@@ -33,6 +33,10 @@ class DefaultExchangeRatesRepositoryTest {
         repository = DefaultExchangeRatesRepository(exchangeRatesDatabase)
     }
 
+    ///////////////////////////////
+    // BASIC LOCAL STORAGE TESTS //
+    ///////////////////////////////
+
     @Test
     fun `exchange rates emit an empty list when nothing has been set`() {
         repository.allExchangeRates(EUR).test()
@@ -94,6 +98,13 @@ class DefaultExchangeRatesRepositoryTest {
             .assertValuesHaveSameElementsAs(EUR_EXCHANGE_RATES, EUR_EXCHANGE_RATES2)
             .assertNotComplete()
     }
+
+
+    ////////////////////////////
+    // NETWORK-FETCHING TESTS //
+    ////////////////////////////
+
+
 }
 
 private val EUR_EXCHANGE_RATES = listOf(
