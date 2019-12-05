@@ -9,11 +9,15 @@ import io.reactivex.Single
  * Decorator for [NetworkRequest] that handles generic errors and wraps specific ones.
  */
 class ErrorWrapperNetworkRequest<T, in P, E>(
-    connectivityChecker: ConnectivityChecker,
-    wrappedRequest: NetworkRequest<T, P, E>
+    private val connectivityChecker: ConnectivityChecker,
+    private val wrappedRequest: NetworkRequest<T, P, E>
 ) : NetworkRequest<T, P, E> {
 
     override fun execute(params: P): Single<Outcome<T, NetworkFailure<E>>> {
-        return Single.just(Failure(NoInternet))
+        return Single.fromCallable { connectivityChecker.hasConnectivity() }
+            .flatMap { hasConnectivity ->
+                if (hasConnectivity.not()) Single.just(Failure(NoInternet))
+                else wrappedRequest.execute(params)
+            }
     }
 }
