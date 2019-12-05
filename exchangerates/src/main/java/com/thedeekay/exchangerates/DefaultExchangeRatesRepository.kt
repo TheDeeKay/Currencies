@@ -11,10 +11,10 @@ class DefaultExchangeRatesRepository(
     private val exchangeRatesDao = exchangeRatesDatabase.exchangeRates()
 
     override fun allExchangeRates(base: Currency): Flowable<List<ExchangeRate>> {
-        return exchangeRatesDao.allExchangeRates(base).map { rates -> rates.map { ExchangeRate(it.base, it.counter, it.rate) } }
+        return exchangeRatesDao.allExchangeRates(base)
     }
 
     override fun setExchangeRates(exchangeRates: List<ExchangeRate>, base: Currency) {
-        exchangeRatesDao.insertExchangeRates(exchangeRates.map { ExchangeRateEntity(it.base, it.counter, it.rate) })
+        exchangeRatesDao.insertExchangeRates(exchangeRates)
     }
 }
