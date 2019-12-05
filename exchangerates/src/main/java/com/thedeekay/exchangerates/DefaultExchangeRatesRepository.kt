@@ -4,6 +4,9 @@ import com.thedeekay.domain.ExchangeRate
 import io.reactivex.Flowable
 import java.util.*
 
+/**
+ * Default implementation of [ExchangeRatesRepository] using Room.
+ */
 class DefaultExchangeRatesRepository(
     exchangeRatesDatabase: ExchangeRatesDatabase
 ) : ExchangeRatesRepository {
