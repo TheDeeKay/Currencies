@@ -9,7 +9,7 @@ import io.reactivex.Flowable
 import java.util.*
 
 @Dao
-abstract class ExchangeRatesDao {
+internal abstract class ExchangeRatesDao {
 
     @Query("SELECT * FROM exchangeRate WHERE base = :base")
     protected abstract fun allExchangeRateEntities(base: Currency): Flowable<List<ExchangeRateEntity>>

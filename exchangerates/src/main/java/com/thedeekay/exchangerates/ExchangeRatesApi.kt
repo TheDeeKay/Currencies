@@ -7,4 +7,6 @@ interface ExchangeRatesApi {
 
     fun exchangeRatesNetworkRequest(): ExchangeRatesNetworkRequest
 
+    fun exchangeRatesRepository(): ExchangeRatesRepository
+
 }

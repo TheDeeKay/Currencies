@@ -7,7 +7,7 @@ import java.math.BigDecimal
 import java.util.*
 
 @Entity(tableName = TABLE, primaryKeys = ["base", "counter"])
-data class ExchangeRateEntity(
+internal data class ExchangeRateEntity(
     val base: Currency,
     val counter: Currency,
     val rate: BigDecimal

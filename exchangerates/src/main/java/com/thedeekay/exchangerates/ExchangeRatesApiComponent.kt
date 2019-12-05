@@ -6,7 +6,11 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [ExchangeRatesNetworkModule::class])
+@Component(modules = [
+    ExchangeRatesNetworkModule::class,
+    ExchangeRatesRepositoryModule::class,
+    ExchangeRatesDatabaseModule::class
+])
 internal interface ExchangeRatesApiComponent : ExchangeRatesApi {
 
     @Component.Builder

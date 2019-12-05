@@ -6,11 +6,14 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import java.util.*
 import java.util.concurrent.TimeUnit.SECONDS
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Default implementation of [ExchangeRatesRepository] using Room.
  */
-class DefaultExchangeRatesRepository(
+@Singleton
+internal class DefaultExchangeRatesRepository @Inject constructor(
     exchangeRatesDatabase: ExchangeRatesDatabase,
     private val exchangeRatesNetworkRequest: ExchangeRatesNetworkRequest
 ) : ExchangeRatesRepository {

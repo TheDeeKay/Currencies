@@ -9,6 +9,6 @@ import androidx.room.TypeConverters
     version = 1
 )
 @TypeConverters(CurrencyTypeConverter::class, BigDecimalTypeConverter::class)
-abstract class ExchangeRatesDatabase : RoomDatabase() {
+internal abstract class ExchangeRatesDatabase : RoomDatabase() {
     abstract fun exchangeRates(): ExchangeRatesDao
 }
