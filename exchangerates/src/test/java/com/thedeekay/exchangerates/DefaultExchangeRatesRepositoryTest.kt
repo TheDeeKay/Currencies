@@ -9,16 +9,21 @@ import com.thedeekay.domain.*
 import com.thedeekay.networking.NetworkFailure.Generic.Unknown
 import com.thedeekay.rxtestutils.assertValueHasSameElementsAs
 import com.thedeekay.rxtestutils.assertValuesHaveSameElementsAs
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
+import io.reactivex.Scheduler
 import io.reactivex.Single
+import io.reactivex.functions.Function
+import io.reactivex.plugins.RxJavaPlugins
+import io.reactivex.schedulers.TestScheduler
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.util.concurrent.TimeUnit.SECONDS
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
@@ -27,11 +32,18 @@ class DefaultExchangeRatesRepositoryTest {
     @get:Rule
     val instantTaskExecutorRule: InstantTaskExecutorRule = InstantTaskExecutorRule()
 
+    private lateinit var computationTestScheduler: TestScheduler
+    private var originalComputationHandler: Function<in Scheduler, out Scheduler>? = null
+
     private lateinit var exchangeRatesNetworkRequest: ExchangeRatesNetworkRequest
     private lateinit var repository: DefaultExchangeRatesRepository
 
     @Before
     fun setUp() {
+        computationTestScheduler = TestScheduler()
+        originalComputationHandler = RxJavaPlugins.getComputationSchedulerHandler()
+        RxJavaPlugins.setComputationSchedulerHandler { computationTestScheduler }
+
         val exchangeRatesDatabase = Room.inMemoryDatabaseBuilder(
             getApplicationContext(),
             ExchangeRatesDatabase::class.java
@@ -44,6 +56,11 @@ class DefaultExchangeRatesRepositoryTest {
 
         repository =
             DefaultExchangeRatesRepository(exchangeRatesDatabase, exchangeRatesNetworkRequest)
+    }
+
+    @After
+    fun tearDown() {
+        RxJavaPlugins.setComputationSchedulerHandler(originalComputationHandler)
     }
 
     ///////////////////////////////
@@ -128,11 +145,27 @@ class DefaultExchangeRatesRepositoryTest {
         repository.setExchangeRates(EUR_EXCHANGE_RATES, EUR)
         every { exchangeRatesNetworkRequest.execute(ExchangeRatesRequestParams(EUR)) }
             .returns(Single.just(Success(EUR_EXCHANGE_RATES2)))
-        confirmVerified()
 
         repository.allExchangeRates(EUR).test()
 
             .assertValuesHaveSameElementsAs(EUR_EXCHANGE_RATES, EUR_EXCHANGE_RATES2)
+            .assertNoErrors()
+            .assertNotComplete()
+    }
+
+    @Test
+    fun `repository should fetch rates every 1 second`() {
+        every { exchangeRatesNetworkRequest.execute(ExchangeRatesRequestParams(EUR)) }
+            .returnsMany(
+                Single.just(Success(EUR_EXCHANGE_RATES)),
+                Single.just(Success(EUR_EXCHANGE_RATES2))
+            )
+        val testSubscriber = repository.allExchangeRates(EUR).test()
+
+        computationTestScheduler.advanceTimeBy(1, SECONDS)
+
+        testSubscriber
+            .assertValuesHaveSameElementsAs(emptyList(), EUR_EXCHANGE_RATES, EUR_EXCHANGE_RATES2)
             .assertNoErrors()
             .assertNotComplete()
     }

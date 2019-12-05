@@ -4,6 +4,7 @@ import com.thedeekay.commons.Outcome.Success
 import com.thedeekay.domain.ExchangeRate
 import io.reactivex.Flowable
 import java.util.*
+import java.util.concurrent.TimeUnit.SECONDS
 
 /**
  * Default implementation of [ExchangeRatesRepository] using Room.
@@ -21,6 +22,14 @@ class DefaultExchangeRatesRepository(
                 exchangeRatesNetworkRequest.execute(ExchangeRatesRequestParams(base))
                     .doOnSuccess { if (it is Success) setExchangeRates(it.result, base) }
                     .ignoreElement()
+            )
+            .mergeWith(
+                Flowable.interval(1, SECONDS)
+                    .flatMapCompletable {
+                        exchangeRatesNetworkRequest.execute(ExchangeRatesRequestParams(base))
+                            .doOnSuccess { if (it is Success) setExchangeRates(it.result, base) }
+                            .ignoreElement()
+                    }
             )
     }
 
