@@ -10,3 +10,9 @@ interface ConnectivityChecker {
      */
     fun hasConnectivity(): Boolean
 }
+
+class FakeConnectivityChecker(
+    var hasInternet: Boolean = true
+) : ConnectivityChecker {
+    override fun hasConnectivity(): Boolean = hasInternet
+}
