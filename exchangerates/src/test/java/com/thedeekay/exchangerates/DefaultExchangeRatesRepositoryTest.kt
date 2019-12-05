@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.thedeekay.domain.*
+import com.thedeekay.rxtestutils.assertValueHasSameElementsAs
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -55,7 +56,7 @@ class DefaultExchangeRatesRepositoryTest {
 
         repository.allExchangeRates(EUR).test()
 
-            .assertValue { it.sameElementsAs(EUR_EXCHANGE_RATES) }
+            .assertValueHasSameElementsAs(EUR_EXCHANGE_RATES)
             .assertNotComplete()
     }
 
@@ -66,7 +67,7 @@ class DefaultExchangeRatesRepositoryTest {
 
         repository.allExchangeRates(EUR).test()
 
-            .assertValue { it.sameElementsAs(EUR_EXCHANGE_RATES2) }
+            .assertValueHasSameElementsAs(EUR_EXCHANGE_RATES2)
             .assertNotComplete()
     }
 
@@ -77,7 +78,7 @@ class DefaultExchangeRatesRepositoryTest {
 
         repository.allExchangeRates(EUR).test()
 
-            .assertValue { it.sameElementsAs(EUR_EXCHANGE_RATES) }
+            .assertValueHasSameElementsAs(EUR_EXCHANGE_RATES)
             .assertNotComplete()
     }
 }
@@ -99,7 +100,3 @@ private val USD_EXCHANGE_RATES = listOf(
     USD / GBP at 0.77164,
     USD / CHF at 0.9686
 )
-
-private fun <T> List<T>.sameElementsAs(
-    other: List<T>
-) = containsAll(other) && other.containsAll(this)
