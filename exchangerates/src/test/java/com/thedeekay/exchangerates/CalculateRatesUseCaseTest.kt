@@ -49,18 +49,31 @@ class CalculateRatesUseCaseTest {
     }
 
     @Test
-    fun `should properly convert amounts when given rates and non-0 amount`() {
+    fun `should continuously convert amounts when given rates and non-0 amount`() {
         setRatesForCurrency(
             EUR,
             listOf(
                 EUR / USD at 1.1082,
                 EUR / GBP at 0.9201
+            ),
+            listOf(
+                EUR / JPY at 100.0,
+                EUR / RUB at 80.0
             )
         )
 
         calculateRatesUseCase.execute(1000L * EUR).test()
 
-            .assertValue(listOf(1108.2 * USD, 920.1 * GBP))
+            .assertValues(
+                listOf(
+                    1108.2 * USD,
+                    920.1 * GBP
+                ),
+                listOf(
+                    100_000L * JPY,
+                    80_000L * RUB
+                )
+            )
             .assertNoErrors()
             .assertNotComplete()
     }
@@ -69,11 +82,9 @@ class CalculateRatesUseCaseTest {
         currency: Currency,
         vararg rates: List<ExchangeRate>
     ) {
-        every { getExchangeRatesUseCase.execute(currency) }.returnsMany(
-            rates.map {
-                Flowable.just(it)
-                    .mergeWith(Flowable.never())
-            }
+        every { getExchangeRatesUseCase.execute(currency) }.returns(
+            Flowable.fromIterable(rates.toList())
+                .mergeWith(Flowable.never())
         )
     }
 }
