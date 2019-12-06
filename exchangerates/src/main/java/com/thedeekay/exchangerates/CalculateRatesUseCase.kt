@@ -10,10 +10,11 @@ import io.reactivex.Flowable
  * For instance: given 10USD, and rates for USD/GBP and USD/EUR, it will continuously calculate
  * how much GBP and how much EUR the given 10USD amount to.
  */
-class CalculateRatesUseCase {
+class CalculateRatesUseCase(exchangeRatesUseCase: GetExchangeRatesUseCase) {
 
     fun execute(conversionAmount: Money): Flowable<List<Money>> {
-        TODO()
+        return Flowable.just(emptyList<Money>())
+            .mergeWith(Flowable.never())
     }
 
 }
