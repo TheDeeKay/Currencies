@@ -53,9 +53,8 @@ class RatesViewModelTest {
     fun `initially selected currency is EUR and is returned when rates are empty`() {
         setCalculatedCurrencies(10L * EUR, emptyList())
 
-        assertThat(
-            viewModel.currencyAmounts.value,
-            `is`(listOf<CurrencyUiModel>(MainCurrency("EUR", "Euro")))
+        assertCurrencyAmounts(
+            listOf(MainCurrency("EUR", "Euro"))
         )
     }
 
@@ -69,14 +68,20 @@ class RatesViewModelTest {
             )
         )
 
+        assertCurrencyAmounts(
+            listOf(
+                MainCurrency("EUR", "Euro"),
+                ConvertedCurrency("USD", "US Dollar", "11.1"),
+                ConvertedCurrency("GBP", "British Pound Sterling", "9.1")
+            )
+        )
+    }
+
+    private fun assertCurrencyAmounts(list: List<CurrencyUiModel>) {
         assertThat(
             viewModel.currencyAmounts.value,
             `is`(
-                listOf(
-                    MainCurrency("EUR", "Euro"),
-                    ConvertedCurrency("USD", "US Dollar", "11.1"),
-                    ConvertedCurrency("GBP", "British Pound Sterling", "9.1")
-                )
+                list
             )
         )
     }
@@ -87,6 +92,8 @@ class RatesViewModelTest {
     ) {
         every { calculateRatesUseCase.execute(mainCurrency) }
             .returns(Flowable.just(calculatedCurrencies).mergeWith(Flowable.never()))
+
+        // has to happen after use case is mocked, otherwise the livedata tries to use it before it's ready
         viewModel.currencyAmounts.observe(lifecycleOwner, Observer { })
         lifecycleOwner.lifecycleRegistry.currentState = STARTED
     }
