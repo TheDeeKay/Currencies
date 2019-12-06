@@ -9,9 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.thedeekay.currencies.CurrencyUiModel.ConvertedCurrency
 import com.thedeekay.currencies.CurrencyUiModel.MainCurrency
-import com.thedeekay.domain.GBP
-import com.thedeekay.domain.JPY
-import com.thedeekay.domain.USD
 
 /**
  * Fragment that displays exchange rates and calculates conversion amounts between different
@@ -29,9 +26,9 @@ class RatesFragment : Fragment() {
         val currencyRatesAdapter = CurrencyRatesAdapter()
         currencyRatesAdapter.submitList(
             listOf(
-                MainCurrency(USD, "USD", "US Dollar"),
-                ConvertedCurrency(GBP, "GBP", "British pound", "123.45"),
-                ConvertedCurrency(JPY, "JPY", "Japanese Yen", "1234.56")
+                MainCurrency("USD", "US Dollar"),
+                ConvertedCurrency("GBP", "British pound", "123.45"),
+                ConvertedCurrency("JPY", "Japanese Yen", "1234.56")
             )
         )
         view.findViewById<RecyclerView>(R.id.currencies_recycler_view)

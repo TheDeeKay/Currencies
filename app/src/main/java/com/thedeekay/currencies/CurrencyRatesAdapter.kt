@@ -46,7 +46,7 @@ object CurrencyDiffUtilCallback : DiffUtil.ItemCallback<CurrencyUiModel>() {
     override fun areItemsTheSame(
         oldItem: CurrencyUiModel,
         newItem: CurrencyUiModel
-    ) = oldItem.currency == newItem.currency
+    ) = oldItem.currencyCode == newItem.currencyCode
 
     override fun areContentsTheSame(
         oldItem: CurrencyUiModel,
