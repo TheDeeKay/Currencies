@@ -79,6 +79,24 @@ class RatesViewModelTest {
         )
     }
 
+    @Test
+    fun `changing main currency amount recalculates other currencies`() {
+        setConvertedCurrenciesForMainCurrency(
+            17.1 * EUR,
+            listOf(
+                19.1 * USD,
+                15.3 * GBP
+            )
+        )
+        viewModel.setNewMainCurrencyAmount("17.1")
+
+        assertCurrencyAmounts(
+            MainCurrency("EUR", "Euro", "17.1"),
+            ConvertedCurrency("USD", "US Dollar", "19.1"),
+            ConvertedCurrency("GBP", "British Pound Sterling", "15.3")
+        )
+    }
+
     private fun assertCurrencyAmounts(vararg currencies: CurrencyUiModel) {
         viewModel.currencyAmounts.test()
             .assertValues(currencies.toList())
