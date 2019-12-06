@@ -13,12 +13,15 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.thedeekay.currencies.CurrencyUiModel.ConvertedCurrency
 import com.thedeekay.currencies.CurrencyUiModel.MainCurrency
+import com.thedeekay.currencies.imageloading.CurrencyFlagLoader
+import com.thedeekay.domain.Currency
 
 /**
  * RecyclerView adapter that displays currencies, their basic info, and converted amounts.
  */
 class CurrencyRatesAdapter(
-    private val mainCurrencyListener: MainCurrencyListener
+    private val mainCurrencyListener: MainCurrencyListener,
+    private val currencyFlagLoader: CurrencyFlagLoader
 ) : ListAdapter<CurrencyUiModel, CurrencyViewHolder>(CurrencyDiffUtilCallback) {
 
     private val mainAmountTextWatcher = SimpleTextWatcher {
@@ -49,9 +52,11 @@ class CurrencyRatesAdapter(
         position: Int,
         payloads: MutableList<Any>
     ) {
-        // TODO: load flag image
         val uiModel = getItem(position)
         holder.run {
+
+            currencyFlagLoader.load(Currency(uiModel.currencyCode), flagImage)
+
             currencyCode.text = uiModel.currencyCode
             currencyName.text = uiModel.currencyName
 

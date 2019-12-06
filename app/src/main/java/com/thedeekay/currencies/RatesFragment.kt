@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.toLiveData
 import androidx.recyclerview.widget.RecyclerView
+import com.thedeekay.currencies.imageloading.CurrencyFlagLoader
 import javax.inject.Inject
 
 /**
@@ -21,6 +22,9 @@ class RatesFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: RatesViewModelFactory
+
+    @Inject
+    lateinit var currencyFlagLoader: CurrencyFlagLoader
 
     private val ratesViewModel by viewModels<RatesViewModel> { viewModelFactory }
 
@@ -38,7 +42,8 @@ class RatesFragment : Fragment() {
     ): View? = inflater.inflate(R.layout.fragment_rates, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val currencyRatesAdapter = CurrencyRatesAdapter(ForwardingMainCurrencyListener())
+        val currencyRatesAdapter =
+            CurrencyRatesAdapter(ForwardingMainCurrencyListener(), currencyFlagLoader)
         view.findViewById<RecyclerView>(R.id.currencies_recycler_view).adapter =
             currencyRatesAdapter
 

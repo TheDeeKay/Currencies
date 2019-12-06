@@ -1,11 +1,19 @@
 package com.thedeekay.currencies
 
+import com.thedeekay.currencies.imageloading.CurrencyFlagLoaderModule
 import com.thedeekay.exchangerates.ExchangeRatesApi
 import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(dependencies = [ExchangeRatesApi::class])
+@Component(
+    modules = [
+        CurrencyFlagLoaderModule::class
+    ],
+    dependencies = [
+        ExchangeRatesApi::class
+    ]
+)
 interface AppComponent {
 
     fun inject(ratesFragment: RatesFragment)

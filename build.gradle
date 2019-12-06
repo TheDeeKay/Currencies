@@ -38,6 +38,8 @@ ext {
     jUnitExtVersion = '1.1.1'
     espressoVersion = '3.2.0'
 
+    glideVersion = '4.10.0'
+
     // RxJava
     rxJavaVersion = '2.2.15'
     rxAndroidVersion = '2.1.1'
