@@ -7,10 +7,12 @@ import com.thedeekay.currencies.CurrencyUiModel.MainCurrency
 import com.thedeekay.domain.Currency
 import com.thedeekay.domain.EUR
 import com.thedeekay.domain.Money
+import com.thedeekay.domain.times
 import com.thedeekay.exchangerates.CalculateRatesUseCase
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.subjects.BehaviorSubject
+import java.math.BigDecimal
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -21,26 +23,25 @@ class RatesViewModel(
     private val calculateRatesUseCase: CalculateRatesUseCase
 ) : ViewModel() {
 
-    private val mainCurrencySubject = BehaviorSubject.createDefault(Pair("0", EUR.currencyCode))
+    private val mainCurrencySubject = BehaviorSubject.createDefault(0L * EUR)
 
     val currencyAmounts: Flowable<List<CurrencyUiModel>> =
         mainCurrencySubject
             .toFlowable(BackpressureStrategy.LATEST)
-            .switchMap { (amount, currencyCode) ->
-                val mainCurrency = Currency(currencyCode)
-                calculateRatesUseCase.execute(Money(amount, mainCurrency))
+            .switchMap { (amount, currency) ->
+                calculateRatesUseCase.execute(Money(amount, currency))
                     .map { currencies ->
-                        listOf(MainCurrency(mainCurrency, amount)) +
+                        listOf(MainCurrency(currency, amount.toString())) +
                                 currencies.map { ConvertedCurrency(it) }
                     }
             }
 
     fun setMainCurrency(amount: String, currencyCode: String) {
-        mainCurrencySubject.onNext(Pair(amount, currencyCode))
+        mainCurrencySubject.onNext(Money(amount, Currency(currencyCode)))
     }
 
     fun setNewMainCurrencyAmount(amount: String) {
-        mainCurrencySubject.onNext(mainCurrencySubject.value!!.copy(first = amount))
+        mainCurrencySubject.onNext(mainCurrencySubject.value!!.copy(amount = BigDecimal(amount)))
     }
 }
 
