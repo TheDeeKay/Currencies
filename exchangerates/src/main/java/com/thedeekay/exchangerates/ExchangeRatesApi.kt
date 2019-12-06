@@ -7,4 +7,6 @@ interface ExchangeRatesApi {
 
     fun getExchangeRatesUseCase(): GetExchangeRatesUseCase
 
+    fun calculateRatesUseCase(): CalculateRatesUseCase
+
 }
