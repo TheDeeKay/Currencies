@@ -23,7 +23,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
+sourceCompatibility = "8"
+targetCompatibility = "8"
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
