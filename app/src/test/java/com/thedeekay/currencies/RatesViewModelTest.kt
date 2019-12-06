@@ -39,13 +39,13 @@ class RatesViewModelTest {
         )
 
         assertCurrencyAmounts(
-            MainCurrency("EUR", "Euro")
+            MainCurrency("EUR", "Euro", "0")
         )
     }
 
     @Test
     fun `when rates are present, currencies are properly mapped`() {
-        viewModel.setMainCurrency(10L * EUR)
+        viewModel.setMainCurrency("10", EUR.currencyCode)
         setConvertedCurrenciesForMainCurrency(
             10L * EUR,
             listOf(
@@ -55,7 +55,7 @@ class RatesViewModelTest {
         )
 
         assertCurrencyAmounts(
-            MainCurrency("EUR", "Euro"),
+            MainCurrency("EUR", "Euro", "10"),
             ConvertedCurrency("USD", "US Dollar", "11.1"),
             ConvertedCurrency("GBP", "British Pound Sterling", "9.1")
         )
@@ -63,19 +63,19 @@ class RatesViewModelTest {
 
     @Test
     fun `changing main currency changes to proper calculated values`() {
-        viewModel.setMainCurrency(5L * GBP)
+        viewModel.setMainCurrency("5.5", GBP.currencyCode)
         setConvertedCurrenciesForMainCurrency(
-            5L * GBP,
+            5.5 * GBP,
             listOf(
-                4L * EUR,
-                6.5 * USD
+                6L * EUR,
+                7.5 * USD
             )
         )
 
         assertCurrencyAmounts(
-            MainCurrency("GBP", "British Pound Sterling"),
-            ConvertedCurrency("EUR", "Euro", "4"),
-            ConvertedCurrency("USD", "US Dollar", "6.5")
+            MainCurrency("GBP", "British Pound Sterling", "5.5"),
+            ConvertedCurrency("EUR", "Euro", "6"),
+            ConvertedCurrency("USD", "US Dollar", "7.5")
         )
     }
 

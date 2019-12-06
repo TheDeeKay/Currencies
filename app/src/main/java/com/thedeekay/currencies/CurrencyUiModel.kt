@@ -1,11 +1,13 @@
 package com.thedeekay.currencies
 
+import com.thedeekay.domain.Money
 import java.util.*
 
 sealed class CurrencyUiModel {
 
     abstract val currencyCode: String
     abstract val currencyName: String
+    abstract val amount: String
 
     abstract override fun equals(other: Any?): Boolean
 
@@ -13,14 +15,29 @@ sealed class CurrencyUiModel {
 
     data class MainCurrency(
         override val currencyCode: String,
-        override val currencyName: String
+        override val currencyName: String,
+        override val amount: String
     ) : CurrencyUiModel() {
-        constructor(currency: Currency) : this(currency.currencyCode, currency.displayName)
+
+        constructor(currency: Currency, amount: String) : this(
+            currency.currencyCode,
+            currency.displayName,
+            amount
+        )
+
     }
 
     data class ConvertedCurrency(
         override val currencyCode: String,
         override val currencyName: String,
-        val amount: String
-    ) : CurrencyUiModel()
+        override val amount: String
+    ) : CurrencyUiModel() {
+
+        constructor(money: Money) : this(
+            money.currency.currencyCode,
+            money.currency.displayName,
+            money.amount.toString() // TODO: better formatting
+        )
+
+    }
 }

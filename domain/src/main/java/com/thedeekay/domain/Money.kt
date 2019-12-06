@@ -15,6 +15,8 @@ data class Money(
 
     constructor(amount: Long, currency: Currency) : this(BigDecimal.valueOf(amount), currency)
 
+    constructor(amount: String, currency: Currency) : this(BigDecimal(amount), currency)
+
     /**
      * Converts this amount of currency to another currency at the given exchange rate.
      *

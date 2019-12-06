@@ -38,11 +38,22 @@ class RatesFragment : Fragment() {
     ): View? = inflater.inflate(R.layout.fragment_rates, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val currencyRatesAdapter = CurrencyRatesAdapter()
+        val currencyRatesAdapter = CurrencyRatesAdapter(ForwardingMainCurrencyListener())
+        view.findViewById<RecyclerView>(R.id.currencies_recycler_view).adapter =
+            currencyRatesAdapter
+
         ratesViewModel.currencyAmounts.toLiveData().observe(viewLifecycleOwner, Observer {
             currencyRatesAdapter.submitList(it)
         })
-        view.findViewById<RecyclerView>(R.id.currencies_recycler_view).adapter =
-            currencyRatesAdapter
+    }
+
+    private inner class ForwardingMainCurrencyListener : MainCurrencyListener {
+        override fun newMainCurrencyAmountEntered(amount: String) =
+            ratesViewModel.setNewMainCurrencyAmount(amount)
+
+        override fun newMainCurrencySelected(
+            newMainAmount: String,
+            newCurrencyCode: String
+        ) = ratesViewModel.setMainCurrency(newMainAmount, newCurrencyCode)
     }
 }

@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.thedeekay.currencies.CurrencyUiModel.ConvertedCurrency
 import com.thedeekay.currencies.CurrencyUiModel.MainCurrency
+import com.thedeekay.domain.Currency
 import com.thedeekay.domain.EUR
 import com.thedeekay.domain.Money
-import com.thedeekay.domain.times
 import com.thedeekay.exchangerates.CalculateRatesUseCase
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
@@ -17,29 +17,30 @@ import javax.inject.Provider
 /**
  * View model for the currencies conversion screen.
  */
-class RatesViewModel(private val calculateRatesUseCase: CalculateRatesUseCase) : ViewModel() {
+class RatesViewModel(
+    private val calculateRatesUseCase: CalculateRatesUseCase
+) : ViewModel() {
 
-    private val mainCurrencySubject = BehaviorSubject.createDefault(0L * EUR)
+    private val mainCurrencySubject = BehaviorSubject.createDefault(Pair("0", EUR.currencyCode))
 
     val currencyAmounts: Flowable<List<CurrencyUiModel>> =
         mainCurrencySubject
             .toFlowable(BackpressureStrategy.LATEST)
-            .switchMap { mainCurrency ->
-                calculateRatesUseCase.execute(mainCurrency)
+            .switchMap { (amount, currencyCode) ->
+                val mainCurrency = Currency(currencyCode)
+                calculateRatesUseCase.execute(Money(amount, mainCurrency))
                     .map { currencies ->
-                        listOf(MainCurrency(mainCurrency.currency)) +
-                                currencies.map {
-                                    ConvertedCurrency(
-                                        it.currency.currencyCode,
-                                        it.currency.displayName,
-                                        it.amount.toString() // TODO: more proper formatting
-                                    )
-                                }
+                        listOf(MainCurrency(mainCurrency, amount)) +
+                                currencies.map { ConvertedCurrency(it) }
                     }
             }
 
-    fun setMainCurrency(mainCurrency: Money) {
-        mainCurrencySubject.onNext(mainCurrency)
+    fun setMainCurrency(amount: String, currencyCode: String) {
+        mainCurrencySubject.onNext(Pair(amount, currencyCode))
+    }
+
+    fun setNewMainCurrencyAmount(amount: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
 
