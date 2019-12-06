@@ -20,7 +20,7 @@ import javax.inject.Inject
  * Network request that fetches exchange rates between given base currency and all other available
  * currencies.
  */
-class ExchangeRatesNetworkRequest @Inject internal constructor(
+internal class ExchangeRatesNetworkRequest @Inject constructor(
     private val exchangeRatesService: ExchangeRatesService,
     private val errorWrapperNetworkRequestFactory: ErrorWrapperNetworkRequestFactory
 ) : NetworkRequest<List<ExchangeRate>, ExchangeRatesRequestParams, ExchangeRatesFailure>

@@ -7,7 +7,7 @@ import java.util.*
 /**
  * Repository that manipulates storage and fetching of exchange rates.
  */
-interface ExchangeRatesRepository {
+internal interface ExchangeRatesRepository {
 
     /**
      * Gets a [Flowable] that emits all exchange rates stored in this repository for the given
