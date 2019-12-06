@@ -51,7 +51,6 @@
         app:barrierDirection="end"
         app:constraint_referenced_ids="currency_code_label,currency_name_label" />
 
-    <!--  TODO: change underline color  -->
     <EditText
         android:id="@+id/currency_amount_edit"
         android:layout_width="wrap_content"

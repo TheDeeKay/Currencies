@@ -23,7 +23,15 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-// TODO: do something with potentially uncaught RxJava exceptions
+/**
+ * NOTE:
+ *
+ * I know of the issue with RxJava and silent failures in JVM tests (hopefully, you do too :D)
+ * More here: https://github.com/ReactiveX/RxJava/issues/5234
+ *
+ * However, how I previously resolved this was by writing a rather complex JUnit rule that took me
+ * around a week and a half to properly implement. Obviously, there is no time for that now.
+ */
 class ExchangeRatesNetworkRequestTest {
 
     @get:Rule
