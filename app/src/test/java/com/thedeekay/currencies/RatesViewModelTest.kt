@@ -51,17 +51,20 @@ class RatesViewModelTest {
 
     @Test
     fun `initially selected currency is EUR and is returned when rates are empty`() {
-        setCalculatedCurrencies(0L * EUR, emptyList())
+        setConvertedCurrenciesForMainCurrency(
+            0L * EUR,
+            emptyList()
+        )
 
         assertCurrencyAmounts(
-            listOf(MainCurrency("EUR", "Euro"))
+            MainCurrency("EUR", "Euro")
         )
     }
 
     @Test
     fun `when rates are present, currencies are properly mapped`() {
         viewModel.setMainCurrency(10L * EUR)
-        setCalculatedCurrencies(
+        setConvertedCurrenciesForMainCurrency(
             10L * EUR,
             listOf(
                 11.1 * USD,
@@ -70,18 +73,16 @@ class RatesViewModelTest {
         )
 
         assertCurrencyAmounts(
-            listOf(
-                MainCurrency("EUR", "Euro"),
-                ConvertedCurrency("USD", "US Dollar", "11.1"),
-                ConvertedCurrency("GBP", "British Pound Sterling", "9.1")
-            )
+            MainCurrency("EUR", "Euro"),
+            ConvertedCurrency("USD", "US Dollar", "11.1"),
+            ConvertedCurrency("GBP", "British Pound Sterling", "9.1")
         )
     }
 
     @Test
     fun `changing main currency changes to proper calculated values`() {
         viewModel.setMainCurrency(5L * GBP)
-        setCalculatedCurrencies(
+        setConvertedCurrenciesForMainCurrency(
             5L * GBP,
             listOf(
                 4L * EUR,
@@ -90,24 +91,20 @@ class RatesViewModelTest {
         )
 
         assertCurrencyAmounts(
-            listOf(
-                MainCurrency("GBP", "British Pound Sterling"),
-                ConvertedCurrency("EUR", "Euro", "4"),
-                ConvertedCurrency("USD", "US Dollar", "6.5")
-            )
+            MainCurrency("GBP", "British Pound Sterling"),
+            ConvertedCurrency("EUR", "Euro", "4"),
+            ConvertedCurrency("USD", "US Dollar", "6.5")
         )
     }
 
-    private fun assertCurrencyAmounts(list: List<CurrencyUiModel>) {
+    private fun assertCurrencyAmounts(vararg currencies: CurrencyUiModel) {
         assertThat(
             viewModel.currencyAmounts.value,
-            `is`(
-                list
-            )
+            `is`(currencies.toList())
         )
     }
 
-    private fun setCalculatedCurrencies(
+    private fun setConvertedCurrenciesForMainCurrency(
         mainCurrency: Money,
         calculatedCurrencies: List<Money>
     ) {
