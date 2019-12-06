@@ -1,6 +1,7 @@
 package com.thedeekay.currencies
 
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.toLiveData
 import androidx.recyclerview.widget.RecyclerView
+import javax.inject.Inject
 
 /**
  * Fragment that displays exchange rates and calculates conversion amounts between different
@@ -17,8 +19,16 @@ import androidx.recyclerview.widget.RecyclerView
  */
 class RatesFragment : Fragment() {
 
-    private val ratesViewModel by viewModels<RatesViewModel> {
-        (requireContext().applicationContext as CurrenciesApplication).appComponent.ratesViewModelFactory()
+    @Inject
+    lateinit var viewModelFactory: RatesViewModelFactory
+
+    private val ratesViewModel by viewModels<RatesViewModel> { viewModelFactory }
+
+    override fun onAttach(context: Context) {
+        (context.applicationContext as CurrenciesApplication)
+            .appComponent
+            .inject(this)
+        super.onAttach(context)
     }
 
     override fun onCreateView(

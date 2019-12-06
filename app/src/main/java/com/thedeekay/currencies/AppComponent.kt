@@ -8,7 +8,7 @@ import javax.inject.Singleton
 @Component(dependencies = [ExchangeRatesApi::class])
 interface AppComponent {
 
-    fun ratesViewModelFactory(): RatesViewModelFactory
+    fun inject(ratesFragment: RatesFragment)
 
     @Component.Builder
     interface Builder {
