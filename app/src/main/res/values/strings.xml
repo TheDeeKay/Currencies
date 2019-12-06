@@ -3,4 +3,6 @@
 
     <!--  RATES SCREEN  -->
     <string name="rates_label">Rates</string>
+    <string name="currency_flag_image_description">Currency flag</string>
+    <string name="currency_amount">Amount</string>
 </resources>
