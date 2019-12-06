@@ -1,6 +1,10 @@
 package com.thedeekay.currencies
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Lifecycle.State.*
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.Observer
 import com.thedeekay.currencies.CurrencyUiModel.ConvertedCurrency
 import com.thedeekay.currencies.CurrencyUiModel.MainCurrency
@@ -11,11 +15,13 @@ import io.mockk.every
 import io.mockk.mockk
 import io.reactivex.Flowable
 import org.hamcrest.CoreMatchers.`is`
+import org.junit.After
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+// TODO: see if it's possible to clear all this LiveData testing junk
 class RatesViewModelTest {
 
     @get:Rule
@@ -26,7 +32,8 @@ class RatesViewModelTest {
     private lateinit var calculateRatesUseCase: CalculateRatesUseCase
     private lateinit var viewModel: RatesViewModel
 
-    private lateinit var observer: Observer<List<CurrencyUiModel>>
+    private lateinit var lifecycleOwner: FakeLifecycleOwner
+
 
     @Before
     fun setUp() {
@@ -34,19 +41,22 @@ class RatesViewModelTest {
 
         viewModel = RatesViewModel(calculateRatesUseCase)
 
-        observer = Observer { }
+        lifecycleOwner = FakeLifecycleOwner()
+    }
+
+    @After
+    fun tearDown() {
+        lifecycleOwner.lifecycleRegistry.currentState = DESTROYED
     }
 
     @Test
     fun `initially selected currency is EUR and is returned when rates are empty`() {
         setCalculatedCurrencies(10L * EUR, emptyList())
-        viewModel.currencyAmounts.observeForever(observer)
 
         assertThat(
             viewModel.currencyAmounts.value,
             `is`(listOf<CurrencyUiModel>(MainCurrency("EUR", "Euro")))
         )
-        viewModel.currencyAmounts.removeObserver(observer)
     }
 
     @Test
@@ -58,7 +68,6 @@ class RatesViewModelTest {
                 9.1 * GBP
             )
         )
-        viewModel.currencyAmounts.observeForever(observer)
 
         assertThat(
             viewModel.currencyAmounts.value,
@@ -70,7 +79,6 @@ class RatesViewModelTest {
                 )
             )
         )
-        viewModel.currencyAmounts.removeObserver(observer)
     }
 
     private fun setCalculatedCurrencies(
@@ -79,5 +87,15 @@ class RatesViewModelTest {
     ) {
         every { calculateRatesUseCase.execute(mainCurrency) }
             .returns(Flowable.just(calculatedCurrencies).mergeWith(Flowable.never()))
+        viewModel.currencyAmounts.observe(lifecycleOwner, Observer { })
+        lifecycleOwner.lifecycleRegistry.currentState = STARTED
     }
+}
+
+private class FakeLifecycleOwner : LifecycleOwner {
+
+    val lifecycleRegistry = LifecycleRegistry(this).apply { currentState = CREATED }
+
+    override fun getLifecycle(): Lifecycle = lifecycleRegistry
+
 }
