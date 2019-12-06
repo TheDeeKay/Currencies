@@ -44,33 +44,40 @@ class CurrencyRatesAdapter(
         }
     }
 
-    override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: CurrencyViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
         // TODO: load flag image
         val uiModel = getItem(position)
         holder.run {
             currencyCode.text = uiModel.currencyCode
             currencyName.text = uiModel.currencyName
 
-            if (uiModel is MainCurrency) mainAmountTextWatcher.isEnabled = false
-            if (currencyAmount.text.toString() != uiModel.amount) {
-                currencyAmount.setText(uiModel.amount)
-            }
-            mainAmountTextWatcher.isEnabled = true
+            currencyAmount.updateAmountText(payloads, uiModel.amount)
 
             when (holder) {
                 is MainViewHolder -> holder.setCurrencyAmountTextWatcher(mainAmountTextWatcher)
-                is ConvertedViewHolder -> {
-                    currencyAmount.setOnFocusChangeListener { _, hasFocus ->
-                        if (hasFocus) {
-                            mainCurrencyListener.newMainCurrencySelected(
-                                uiModel.amount,
-                                uiModel.currencyCode
-                            )
-                        }
-                    }
-                }
+                is ConvertedViewHolder ->
+                    holder.setOnEditClickListener(uiModel, mainCurrencyListener)
             }
         }
+    }
+
+    private fun EditText.updateAmountText(
+        payloads: MutableList<Any>,
+        amount: String
+    ) {
+        mainAmountTextWatcher.isEnabled = false
+        if (text.toString() != amount && payloads != listOf(MainCurrencyAmountChangedPayload)) {
+            setText(amount)
+        }
+        mainAmountTextWatcher.isEnabled = true
+    }
+
+    override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
+        onBindViewHolder(holder, position, mutableListOf())
     }
 }
 
@@ -94,7 +101,22 @@ class MainViewHolder(itemView: View) : CurrencyViewHolder(itemView) {
     }
 }
 
-class ConvertedViewHolder(itemView: View) : CurrencyViewHolder(itemView)
+class ConvertedViewHolder(itemView: View) : CurrencyViewHolder(itemView) {
+
+    fun setOnEditClickListener(
+        uiModel: CurrencyUiModel,
+        mainCurrencyListener: MainCurrencyListener
+    ) {
+        currencyAmount.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                mainCurrencyListener.newMainCurrencySelected(
+                    uiModel.amount,
+                    uiModel.currencyCode
+                )
+            }
+        }
+    }
+}
 
 object CurrencyDiffUtilCallback : DiffUtil.ItemCallback<CurrencyUiModel>() {
     override fun areItemsTheSame(
@@ -106,7 +128,16 @@ object CurrencyDiffUtilCallback : DiffUtil.ItemCallback<CurrencyUiModel>() {
         oldItem: CurrencyUiModel,
         newItem: CurrencyUiModel
     ) = oldItem == newItem
+
+    override fun getChangePayload(oldItem: CurrencyUiModel, newItem: CurrencyUiModel): Any? {
+        if (oldItem is MainCurrency && newItem is MainCurrency) {
+            return MainCurrencyAmountChangedPayload
+        }
+        return super.getChangePayload(oldItem, newItem)
+    }
 }
+
+object MainCurrencyAmountChangedPayload
 
 interface MainCurrencyListener {
     fun newMainCurrencyAmountEntered(amount: String)
