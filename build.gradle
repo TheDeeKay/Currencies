@@ -40,6 +40,7 @@ ext {
 
     // RxJava
     rxJavaVersion = '2.2.15'
+    rxAndroidVersion = '2.1.1'
 
     javaxInjectVersion = '1'
 

@@ -6,6 +6,7 @@ import com.thedeekay.currencies.CurrencyUiModel.MainCurrency
 import com.thedeekay.domain.*
 import com.thedeekay.exchangerates.CalculateRatesUseCase
 import com.thedeekay.rxtestutils.RxJavaSchedulersRule
+import com.thedeekay.rxtestutils.assertLatestValue
 import io.mockk.every
 import io.mockk.mockk
 import io.reactivex.Flowable
@@ -38,7 +39,7 @@ class RatesViewModelTest {
             emptyList()
         )
 
-        assertCurrencyAmounts(
+        assertLatestCurrencyAmounts(
             MainCurrency("EUR", "Euro", "0")
         )
     }
@@ -54,7 +55,7 @@ class RatesViewModelTest {
             )
         )
 
-        assertCurrencyAmounts(
+        assertLatestCurrencyAmounts(
             MainCurrency("EUR", "Euro", "10"),
             ConvertedCurrency("USD", "US Dollar", "11.1"),
             ConvertedCurrency("GBP", "British Pound Sterling", "9.1")
@@ -72,7 +73,7 @@ class RatesViewModelTest {
             )
         )
 
-        assertCurrencyAmounts(
+        assertLatestCurrencyAmounts(
             MainCurrency("GBP", "British Pound Sterling", "5.5"),
             ConvertedCurrency("EUR", "Euro", "6"),
             ConvertedCurrency("USD", "US Dollar", "7.5")
@@ -90,16 +91,16 @@ class RatesViewModelTest {
         )
         viewModel.setNewMainCurrencyAmount("17.1")
 
-        assertCurrencyAmounts(
+        assertLatestCurrencyAmounts(
             MainCurrency("EUR", "Euro", "17.1"),
             ConvertedCurrency("USD", "US Dollar", "19.1"),
             ConvertedCurrency("GBP", "British Pound Sterling", "15.3")
         )
     }
 
-    private fun assertCurrencyAmounts(vararg currencies: CurrencyUiModel) {
+    private fun assertLatestCurrencyAmounts(vararg currencies: CurrencyUiModel) {
         viewModel.currencyAmounts.test()
-            .assertValues(currencies.toList())
+            .assertLatestValue(currencies.toList())
             .assertNoErrors()
             .assertNotComplete()
     }

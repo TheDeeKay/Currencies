@@ -12,3 +12,7 @@ fun <T> TestSubscriber<List<T>>.assertValuesHaveSameElementsAs(vararg other: Lis
         acc.assertValueAt(index) { it.hasSameElementsAs(list) }
     }
 }
+
+fun <T> TestSubscriber<T>.assertLatestValue(value: T): TestSubscriber<T> {
+    return assertValueAt(valueCount() - 1, value)
+}

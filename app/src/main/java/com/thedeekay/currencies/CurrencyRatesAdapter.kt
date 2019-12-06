@@ -22,7 +22,9 @@ class CurrencyRatesAdapter(
 ) : ListAdapter<CurrencyUiModel, CurrencyViewHolder>(CurrencyDiffUtilCallback) {
 
     private val mainAmountTextWatcher = SimpleTextWatcher {
+        isEnabled = false
         mainCurrencyListener.newMainCurrencyAmountEntered(it)
+        isEnabled = true
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -58,11 +60,13 @@ class CurrencyRatesAdapter(
             when (holder) {
                 is MainViewHolder -> holder.setCurrencyAmountTextWatcher(mainAmountTextWatcher)
                 is ConvertedViewHolder -> {
-                    currencyAmount.setOnClickListener {
-                        mainCurrencyListener.newMainCurrencySelected(
-                            uiModel.amount,
-                            uiModel.currencyCode
-                        )
+                    currencyAmount.setOnFocusChangeListener { _, hasFocus ->
+                        if (hasFocus) {
+                            mainCurrencyListener.newMainCurrencySelected(
+                                uiModel.amount,
+                                uiModel.currencyCode
+                            )
+                        }
                     }
                 }
             }
@@ -110,7 +114,7 @@ interface MainCurrencyListener {
 }
 
 private class SimpleTextWatcher(
-    private val listener: (String) -> Unit
+    private val listener: SimpleTextWatcher.(String) -> Unit
 ) : TextWatcher {
 
     var isEnabled = true
