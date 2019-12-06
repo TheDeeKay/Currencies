@@ -6,6 +6,7 @@ import io.mockk.mockk
 import io.reactivex.Flowable
 import org.junit.Before
 import org.junit.Test
+import java.util.*
 
 class CalculateRatesUseCaseTest {
 
@@ -21,10 +22,7 @@ class CalculateRatesUseCaseTest {
 
     @Test
     fun `should return empty list when no rates are known`() {
-        every { getExchangeRatesUseCase.execute(EUR) }.returns(
-            Flowable.just(emptyList<ExchangeRate>())
-                .mergeWith(Flowable.never())
-        )
+        setRatesForCurrency(EUR, emptyList())
 
         calculateRatesUseCase.execute(10L * EUR).test()
 
@@ -35,14 +33,12 @@ class CalculateRatesUseCaseTest {
 
     @Test
     fun `should return 0 amounts for all currencies if original amount is 0`() {
-        every { getExchangeRatesUseCase.execute(EUR) }.returns(
-            Flowable.just(
-                listOf(
-                    EUR / USD at 1.1082,
-                    EUR / GBP at 0.9201
-                )
+        setRatesForCurrency(
+            EUR,
+            listOf(
+                EUR / USD at 1.1082,
+                EUR / GBP at 0.9201
             )
-                .mergeWith(Flowable.never())
         )
 
         calculateRatesUseCase.execute(0L * EUR).test()
@@ -50,5 +46,15 @@ class CalculateRatesUseCaseTest {
             .assertValue(listOf(0L * USD, 0L * GBP))
             .assertNoErrors()
             .assertNotComplete()
+    }
+
+    private fun setRatesForCurrency(
+        currency: Currency,
+        rates: List<ExchangeRate>
+    ) {
+        every { getExchangeRatesUseCase.execute(currency) }.returns(
+            Flowable.just(rates)
+                .mergeWith(Flowable.never())
+        )
     }
 }
