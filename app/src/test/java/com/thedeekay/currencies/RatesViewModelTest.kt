@@ -46,12 +46,19 @@ class RatesViewModelTest {
 
     @Test
     fun `initially selected currency is EUR`() {
-        every { calculateRatesUseCase.execute(0L * EUR) }
-            .returns(Flowable.just(emptyList<Money>()).mergeWith(Flowable.never()))
+        setCalculatedCurrencies(0L * EUR, emptyList())
 
         assertThat(
             viewModel.currencyAmounts.value,
             `is`(listOf<CurrencyUiModel>(MainCurrency("EUR", "Euro")))
         )
+    }
+
+    private fun setCalculatedCurrencies(
+        mainCurrency: Money,
+        calculatedCurrencies: List<Money>
+    ) {
+        every { calculateRatesUseCase.execute(mainCurrency) }
+            .returns(Flowable.just(calculatedCurrencies).mergeWith(Flowable.never()))
     }
 }
