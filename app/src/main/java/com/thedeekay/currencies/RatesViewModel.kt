@@ -1,6 +1,7 @@
 package com.thedeekay.currencies
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.thedeekay.currencies.CurrencyUiModel.ConvertedCurrency
 import com.thedeekay.currencies.CurrencyUiModel.MainCurrency
 import com.thedeekay.domain.EUR
@@ -10,6 +11,8 @@ import com.thedeekay.exchangerates.CalculateRatesUseCase
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.subjects.BehaviorSubject
+import javax.inject.Inject
+import javax.inject.Provider
 
 /**
  * View model for the currencies conversion screen.
@@ -37,5 +40,14 @@ class RatesViewModel(private val calculateRatesUseCase: CalculateRatesUseCase) :
 
     fun setMainCurrency(mainCurrency: Money) {
         mainCurrencySubject.onNext(mainCurrency)
+    }
+}
+
+class RatesViewModelFactory @Inject constructor(
+    private val calculateRatesUseCase: Provider<CalculateRatesUseCase>
+) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return RatesViewModel(calculateRatesUseCase.get()) as T
     }
 }

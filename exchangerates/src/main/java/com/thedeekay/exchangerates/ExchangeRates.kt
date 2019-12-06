@@ -19,16 +19,11 @@ object ExchangeRates {
      * Initialize this module and prepare it for use.
      */
     fun init(context: Context) {
-
-        DaggerExchangeRatesApiComponent
-            .builder()
-            .bindContext(context)
-            .retrofitModule(
-                RetrofitModule(
-                    BASE_URL
-                )
-            )
-            .build()
+        exchangeRatesApi =
+            DaggerExchangeRatesApiComponent.builder()
+                .bindContext(context)
+                .retrofitModule(RetrofitModule(BASE_URL))
+                .build()
     }
 
 }
