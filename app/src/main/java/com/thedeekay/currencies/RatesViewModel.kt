@@ -73,7 +73,7 @@ class RatesViewModel(
 
     fun setNewMainCurrencyAmount(amount: String) {
         stateMachine.handleEvent(MainCurrencyNewAmount(amount))
-        val bigDecimalAmount = if (amount.isNotEmpty()) BigDecimal(amount) else BigDecimal.ZERO
+        val bigDecimalAmount = amount.stringToBigDecimal()
         mainCurrencySubject.onNext(mainCurrencySubject.value!!.copy(amount = bigDecimalAmount))
     }
 }
@@ -119,12 +119,6 @@ private class StateMachine {
         }
         subject.onNext(state)
     }
-
-    private fun String.stringToBigDecimal(): BigDecimal {
-        return if (isNotEmpty()) BigDecimal(this)
-        else BigDecimal.ZERO
-    }
-
 }
 
 private data class State(
@@ -143,6 +137,16 @@ private sealed class Event {
         val baseCurrency: Currency
     ) : Event()
 }
+
+private fun String.stringToBigDecimal(): BigDecimal {
+    return if (isNotEmpty()) {
+        val bigDecimal = BigDecimal(this)
+        if (bigDecimal.compareTo(BigDecimal.ZERO) == 0) BigDecimal.ZERO
+        else bigDecimal
+    }
+    else BigDecimal.ZERO
+}
+
 
 class RatesViewModelFactory @Inject constructor(
     private val calculateRatesUseCase: Provider<CalculateRatesUseCase>
