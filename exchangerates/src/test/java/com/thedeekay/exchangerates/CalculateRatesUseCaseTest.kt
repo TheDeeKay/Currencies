@@ -1,0 +1,3 @@
+package com.thedeekay.exchangerates
+
+class CalculateRatesUseCaseTest
