@@ -38,7 +38,8 @@ class RatesViewModel(
                 listOf(
                     MainCurrency(
                         mainCurrency.currency,
-                        mainCurrency.amount.toString()
+                        if (mainCurrency.amount.compareTo(BigDecimal.ZERO) == 0) ""
+                        else mainCurrency.amount.toString()
                     )
                 ) + state.convertedCurrencies.map {
                     ConvertedCurrency(it)
@@ -143,8 +144,7 @@ private fun String.stringToBigDecimal(): BigDecimal {
         val bigDecimal = BigDecimal(this)
         if (bigDecimal.compareTo(BigDecimal.ZERO) == 0) BigDecimal.ZERO
         else bigDecimal
-    }
-    else BigDecimal.ZERO
+    } else BigDecimal.ZERO
 }
 
 

@@ -1,6 +1,7 @@
 package com.thedeekay.currencies
 
 import com.thedeekay.domain.Money
+import java.math.BigDecimal
 import java.util.*
 import kotlin.math.max
 
@@ -37,8 +38,15 @@ sealed class CurrencyUiModel {
         constructor(money: Money) : this(
             money.currency.currencyCode,
             money.currency.displayName,
-            String.format("%.${money.decimalPlaces()}f", money.amount.toDouble())
+            formatAmount(money)
         )
+
+        companion object {
+            private fun formatAmount(money: Money): String {
+                if (money.amount.compareTo(BigDecimal.ZERO) == 0) return ""
+                return String.format("%.${money.decimalPlaces()}f", money.amount.toDouble())
+            }
+        }
 
     }
 }

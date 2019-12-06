@@ -12,4 +12,7 @@
 
     <!--  ICON SIZE  -->
     <dimen name="icon_large">48dp</dimen>
+
+    <!--  MISCELLANEOUS  -->
+    <dimen name="edit_text_min_width">48dp</dimen>
 </resources>
