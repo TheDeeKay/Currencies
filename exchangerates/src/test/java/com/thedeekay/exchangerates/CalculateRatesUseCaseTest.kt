@@ -4,18 +4,27 @@ import com.thedeekay.domain.*
 import io.mockk.every
 import io.mockk.mockk
 import io.reactivex.Flowable
+import org.junit.Before
 import org.junit.Test
 
 class CalculateRatesUseCaseTest {
 
+    private lateinit var getExchangeRatesUseCase: GetExchangeRatesUseCase
+    private lateinit var calculateRatesUseCase: CalculateRatesUseCase
+
+    @Before
+    fun setUp() {
+        getExchangeRatesUseCase = mockk()
+
+        calculateRatesUseCase = CalculateRatesUseCase(getExchangeRatesUseCase)
+    }
+
     @Test
     fun `should return empty list when no rates are known`() {
-        val getExchangeRatesUseCase = mockk<GetExchangeRatesUseCase>()
         every { getExchangeRatesUseCase.execute(EUR) }.returns(
             Flowable.just(emptyList<ExchangeRate>())
                 .mergeWith(Flowable.never())
         )
-        val calculateRatesUseCase = CalculateRatesUseCase(getExchangeRatesUseCase)
 
         calculateRatesUseCase.execute(10L * EUR).test()
 
@@ -26,7 +35,6 @@ class CalculateRatesUseCaseTest {
 
     @Test
     fun `should return 0 amounts for all currencies if original amount is 0`() {
-        val getExchangeRatesUseCase = mockk<GetExchangeRatesUseCase>()
         every { getExchangeRatesUseCase.execute(EUR) }.returns(
             Flowable.just(
                 listOf(
@@ -36,7 +44,6 @@ class CalculateRatesUseCaseTest {
             )
                 .mergeWith(Flowable.never())
         )
-        val calculateRatesUseCase = CalculateRatesUseCase(getExchangeRatesUseCase)
 
         calculateRatesUseCase.execute(0L * EUR).test()
 
