@@ -12,7 +12,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.reactivex.Flowable
 import org.hamcrest.CoreMatchers.`is`
+import org.junit.After
 import org.junit.Assert.assertThat
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -23,19 +25,33 @@ class RatesViewModelTest {
     @get:Rule
     val instantTaskExecutorRule: InstantTaskExecutorRule = InstantTaskExecutorRule()
 
+    private lateinit var calculateRatesUseCase: CalculateRatesUseCase
+    private lateinit var viewModel: RatesViewModel
+
+    private lateinit var observer: Observer<List<CurrencyUiModel>>
+
+    @Before
+    fun setUp() {
+        calculateRatesUseCase = mockk()
+
+        viewModel = RatesViewModel(calculateRatesUseCase)
+
+        viewModel.currencyAmounts.observeForever(observer)
+    }
+
+    @After
+    fun tearDown() {
+        viewModel.currencyAmounts.removeObserver(observer)
+    }
+
     @Test
     fun `initially selected currency is EUR`() {
-        val calculateRatesUseCase = mockk<CalculateRatesUseCase>()
         every { calculateRatesUseCase.execute(0L * EUR) }
             .returns(Flowable.just(emptyList<Money>()).mergeWith(Flowable.never()))
-        val viewModel = RatesViewModel(calculateRatesUseCase)
-        val observer = Observer<List<CurrencyUiModel>> { }
-        viewModel.currencyAmounts.observeForever(observer)
 
         assertThat(
             viewModel.currencyAmounts.value,
             `is`(listOf<CurrencyUiModel>(MainCurrency("EUR", "Euro")))
         )
-        viewModel.currencyAmounts.removeObserver(observer)
     }
 }
