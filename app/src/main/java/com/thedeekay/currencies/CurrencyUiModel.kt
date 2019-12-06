@@ -1,5 +1,7 @@
 package com.thedeekay.currencies
 
+import java.util.*
+
 sealed class CurrencyUiModel {
 
     abstract val currencyCode: String
@@ -12,7 +14,9 @@ sealed class CurrencyUiModel {
     data class MainCurrency(
         override val currencyCode: String,
         override val currencyName: String
-    ) : CurrencyUiModel()
+    ) : CurrencyUiModel() {
+        constructor(currency: Currency) : this(currency.currencyCode, currency.displayName)
+    }
 
     data class ConvertedCurrency(
         override val currencyCode: String,

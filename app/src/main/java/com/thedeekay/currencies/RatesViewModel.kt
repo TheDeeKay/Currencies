@@ -7,26 +7,38 @@ import com.thedeekay.currencies.CurrencyUiModel.ConvertedCurrency
 import com.thedeekay.currencies.CurrencyUiModel.MainCurrency
 import com.thedeekay.domain.EUR
 import com.thedeekay.domain.Money
+import com.thedeekay.domain.times
 import com.thedeekay.exchangerates.CalculateRatesUseCase
-import java.math.BigDecimal
+import io.reactivex.BackpressureStrategy
+import io.reactivex.subjects.BehaviorSubject
 
 /**
  * View model for the currencies conversion screen.
  */
 class RatesViewModel(private val calculateRatesUseCase: CalculateRatesUseCase) : ViewModel() {
 
+    private val mainCurrencySubject = BehaviorSubject.createDefault(0L * EUR)
+
     val currencyAmounts: LiveData<List<CurrencyUiModel>> by lazy {
-        calculateRatesUseCase.execute(Money(BigDecimal("10"), EUR))
-            .map { currencies ->
-                listOf(MainCurrency(EUR.currencyCode, EUR.displayName)) +
-                        currencies.map {
-                            ConvertedCurrency(
-                                it.currency.currencyCode,
-                                it.currency.displayName,
-                                it.amount.toString()
-                            )
-                        }
-            }
+        mainCurrencySubject.switchMap { mainCurrency ->
+            calculateRatesUseCase.execute(mainCurrency)
+                .map { currencies ->
+                    listOf(MainCurrency(mainCurrency.currency)) +
+                            currencies.map {
+                                ConvertedCurrency(
+                                    it.currency.currencyCode,
+                                    it.currency.displayName,
+                                    it.amount.toString() // TODO: more proper formatting
+                                )
+                            }
+                }
+                .toObservable()
+        }
+            .toFlowable(BackpressureStrategy.LATEST)
             .toLiveData()
+    }
+
+    fun setMainCurrency(mainCurrency: Money) {
+        mainCurrencySubject.onNext(mainCurrency)
     }
 }

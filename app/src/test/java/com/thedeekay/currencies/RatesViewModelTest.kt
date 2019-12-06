@@ -51,7 +51,7 @@ class RatesViewModelTest {
 
     @Test
     fun `initially selected currency is EUR and is returned when rates are empty`() {
-        setCalculatedCurrencies(10L * EUR, emptyList())
+        setCalculatedCurrencies(0L * EUR, emptyList())
 
         assertCurrencyAmounts(
             listOf(MainCurrency("EUR", "Euro"))
@@ -60,6 +60,7 @@ class RatesViewModelTest {
 
     @Test
     fun `when rates are present, currencies are properly mapped`() {
+        viewModel.setMainCurrency(10L * EUR)
         setCalculatedCurrencies(
             10L * EUR,
             listOf(
@@ -73,6 +74,26 @@ class RatesViewModelTest {
                 MainCurrency("EUR", "Euro"),
                 ConvertedCurrency("USD", "US Dollar", "11.1"),
                 ConvertedCurrency("GBP", "British Pound Sterling", "9.1")
+            )
+        )
+    }
+
+    @Test
+    fun `changing main currency changes to proper calculated values`() {
+        viewModel.setMainCurrency(5L * GBP)
+        setCalculatedCurrencies(
+            5L * GBP,
+            listOf(
+                4L * EUR,
+                6.5 * USD
+            )
+        )
+
+        assertCurrencyAmounts(
+            listOf(
+                MainCurrency("GBP", "British Pound Sterling"),
+                ConvertedCurrency("EUR", "Euro", "4"),
+                ConvertedCurrency("USD", "US Dollar", "6.5")
             )
         )
     }
