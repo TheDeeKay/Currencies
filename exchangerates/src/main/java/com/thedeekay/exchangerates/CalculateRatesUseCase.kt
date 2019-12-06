@@ -1,6 +1,7 @@
 package com.thedeekay.exchangerates
 
 import com.thedeekay.domain.Money
+import com.thedeekay.domain.times
 import io.reactivex.Flowable
 
 /**
@@ -10,11 +11,11 @@ import io.reactivex.Flowable
  * For instance: given 10USD, and rates for USD/GBP and USD/EUR, it will continuously calculate
  * how much GBP and how much EUR the given 10USD amount to.
  */
-class CalculateRatesUseCase(exchangeRatesUseCase: GetExchangeRatesUseCase) {
+class CalculateRatesUseCase(private val exchangeRatesUseCase: GetExchangeRatesUseCase) {
 
     fun execute(conversionAmount: Money): Flowable<List<Money>> {
-        return Flowable.just(emptyList<Money>())
-            .mergeWith(Flowable.never())
+        return exchangeRatesUseCase.execute(conversionAmount.currency)
+            .map { rates -> rates.map { 0L * it.counter } }
     }
 
 }
