@@ -41,7 +41,7 @@ class RatesViewModelTest {
         )
 
         assertLatestCurrencyAmounts(
-            MainCurrency("EUR", "Euro", "0")
+            MainCurrency("EUR", "Euro", "")
         )
     }
 

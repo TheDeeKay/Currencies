@@ -69,7 +69,7 @@ class RatesViewModel(
 
     fun setMainCurrency(amount: String, currencyCode: String) {
         stateMachine.handleEvent(NewMainCurrency(amount, Currency(currencyCode)))
-        mainCurrencySubject.onNext(Money(amount, Currency(currencyCode)))
+        mainCurrencySubject.onNext(Money(amount.stringToBigDecimal(), Currency(currencyCode)))
     }
 
     fun setNewMainCurrencyAmount(amount: String) {
@@ -81,7 +81,7 @@ class RatesViewModel(
 
 private class StateMachine {
 
-    private var state: State = State(Money("0", EUR), emptyList())
+    private var state: State = State(Money(BigDecimal.ZERO, EUR), emptyList())
     private val subject = BehaviorSubject.createDefault(state)
 
     val stateFlowable: Flowable<State> = subject.toFlowable(BackpressureStrategy.LATEST)
