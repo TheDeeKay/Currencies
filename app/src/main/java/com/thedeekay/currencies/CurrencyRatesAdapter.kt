@@ -9,13 +9,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.thedeekay.currencies.CurrencyUiModel.ConvertedCurrency
 
 /**
  * RecyclerView adapter that displays currencies, their basic info, and converted amounts.
  */
-class CurrencyRatesAdapter(
-
-) : ListAdapter<CurrencyUiModel, CurrencyViewHolder>(CurrencyDiffUtilCallback) {
+class CurrencyRatesAdapter :
+    ListAdapter<CurrencyUiModel, CurrencyViewHolder>(CurrencyDiffUtilCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHolder {
         return CurrencyViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.currency_list_item, parent, false)
@@ -23,7 +23,15 @@ class CurrencyRatesAdapter(
     }
 
     override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        // TODO: load flag image
+        val uiModel = getItem(position)
+        holder.run {
+            currencyCode.text = uiModel.currencyCode
+            currencyName.text = uiModel.currencyName
+            if (uiModel is ConvertedCurrency) currencyAmount.setText(uiModel.amount)
+        }
+
+        // TODO: add different listeners
     }
 }
 
@@ -35,11 +43,13 @@ class CurrencyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 }
 
 object CurrencyDiffUtilCallback : DiffUtil.ItemCallback<CurrencyUiModel>() {
-    override fun areItemsTheSame(oldItem: CurrencyUiModel, newItem: CurrencyUiModel): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun areItemsTheSame(
+        oldItem: CurrencyUiModel,
+        newItem: CurrencyUiModel
+    ) = oldItem.currency == newItem.currency
 
-    override fun areContentsTheSame(oldItem: CurrencyUiModel, newItem: CurrencyUiModel): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun areContentsTheSame(
+        oldItem: CurrencyUiModel,
+        newItem: CurrencyUiModel
+    ) = oldItem == newItem
 }
