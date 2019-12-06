@@ -1,6 +1,7 @@
 package com.thedeekay.currencies
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.Observer
 import com.thedeekay.currencies.CurrencyUiModel.MainCurrency
 import com.thedeekay.domain.EUR
 import com.thedeekay.domain.Money
@@ -28,11 +29,13 @@ class RatesViewModelTest {
         every { calculateRatesUseCase.execute(0L * EUR) }
             .returns(Flowable.just(emptyList<Money>()).mergeWith(Flowable.never()))
         val viewModel = RatesViewModel(calculateRatesUseCase)
-        viewModel.currencyAmounts.observeForever { }
+        val observer = Observer<List<CurrencyUiModel>> { }
+        viewModel.currencyAmounts.observeForever(observer)
 
         assertThat(
             viewModel.currencyAmounts.value,
             `is`(listOf<CurrencyUiModel>(MainCurrency("EUR", "Euro")))
         )
+        viewModel.currencyAmounts.removeObserver(observer)
     }
 }
