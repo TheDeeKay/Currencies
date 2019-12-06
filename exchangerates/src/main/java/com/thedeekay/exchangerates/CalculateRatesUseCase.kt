@@ -1,7 +1,6 @@
 package com.thedeekay.exchangerates
 
 import com.thedeekay.domain.Money
-import com.thedeekay.domain.times
 import io.reactivex.Flowable
 
 /**
@@ -15,7 +14,9 @@ class CalculateRatesUseCase(private val exchangeRatesUseCase: GetExchangeRatesUs
 
     fun execute(conversionAmount: Money): Flowable<List<Money>> {
         return exchangeRatesUseCase.execute(conversionAmount.currency)
-            .map { rates -> rates.map { 0L * it.counter } }
+            .map { rates ->
+                rates.map { rate -> conversionAmount.convert(rate) }
+            }
     }
 
 }

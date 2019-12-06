@@ -29,6 +29,12 @@ data class ExchangeRate(
     constructor(base: Currency, counter: Currency, rate: Long) :
             this(base, counter, BigDecimal.valueOf(rate))
 
+    /**
+     * Converts [amount] of [base] to [counter] at the given [rate].
+     *
+     * For instance, if this exchange rate is EUR/USD at 1.1, this method will convert [amount] of
+     * EUR to [amount]*1.1 of USD.
+     */
     fun convert(amount: Double): Money = Money(amount, base).convert(this)
 
     init {
