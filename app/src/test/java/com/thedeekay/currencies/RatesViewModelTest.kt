@@ -47,9 +47,9 @@ class RatesViewModelTest {
 
     @Test
     fun `when rates are present, currencies are properly mapped`() {
-        viewModel.setMainCurrency("10", "EUR")
+        viewModel.setMainCurrency("10.172", "EUR")
         setConvertedCurrenciesForMainCurrency(
-            10L * EUR,
+            10.172 * EUR,
             listOf(
                 11.1 * USD,
                 9.1 * GBP
@@ -57,9 +57,9 @@ class RatesViewModelTest {
         )
 
         assertLatestCurrencyAmounts(
-            MainCurrency("EUR", "Euro", "10"),
-            ConvertedCurrency("USD", "US Dollar", "11.1"),
-            ConvertedCurrency("GBP", "British Pound Sterling", "9.1")
+            MainCurrency("EUR", "Euro", "10.172"),
+            ConvertedCurrency("USD", "US Dollar", "11.10"),
+            ConvertedCurrency("GBP", "British Pound Sterling", "9.10")
         )
     }
 
@@ -70,14 +70,14 @@ class RatesViewModelTest {
             5.5 * GBP,
             listOf(
                 6L * EUR,
-                7.5 * USD
+                7.553 * USD
             )
         )
 
         assertLatestCurrencyAmounts(
             MainCurrency("GBP", "British Pound Sterling", "5.5"),
-            ConvertedCurrency("EUR", "Euro", "6"),
-            ConvertedCurrency("USD", "US Dollar", "7.5")
+            ConvertedCurrency("EUR", "Euro", "6.00"),
+            ConvertedCurrency("USD", "US Dollar", "7.55")
         )
     }
 
@@ -86,7 +86,7 @@ class RatesViewModelTest {
         setConvertedCurrenciesForMainCurrency(
             17.1 * EUR,
             listOf(
-                19.1 * USD,
+                1731.132 * JPY,
                 15.3 * GBP
             )
         )
@@ -94,8 +94,8 @@ class RatesViewModelTest {
 
         assertLatestCurrencyAmounts(
             MainCurrency("EUR", "Euro", "17.1"),
-            ConvertedCurrency("USD", "US Dollar", "19.1"),
-            ConvertedCurrency("GBP", "British Pound Sterling", "15.3")
+            ConvertedCurrency("JPY", "Japanese Yen", "1731"),
+            ConvertedCurrency("GBP", "British Pound Sterling", "15.30")
         )
     }
 
@@ -114,8 +114,8 @@ class RatesViewModelTest {
 
         assertLatestCurrencyAmounts(
             MainCurrency("EUR", "Euro", "4"),
-            ConvertedCurrency("GBP", "British Pound Sterling", "5"),
-            ConvertedCurrency("USD", "US Dollar", "6.5")
+            ConvertedCurrency("GBP", "British Pound Sterling", "5.00"),
+            ConvertedCurrency("USD", "US Dollar", "6.50")
         )
     }
 

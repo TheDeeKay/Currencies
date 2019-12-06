@@ -2,6 +2,7 @@ package com.thedeekay.currencies
 
 import com.thedeekay.domain.Money
 import java.util.*
+import kotlin.math.max
 
 sealed class CurrencyUiModel {
 
@@ -36,8 +37,10 @@ sealed class CurrencyUiModel {
         constructor(money: Money) : this(
             money.currency.currencyCode,
             money.currency.displayName,
-            money.amount.toString() // TODO: better formatting
+            String.format("%.${money.decimalPlaces()}f", money.amount.toDouble())
         )
 
     }
 }
+
+private fun Money.decimalPlaces(): Int = max(currency.defaultFractionDigits, 0)
