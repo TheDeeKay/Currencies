@@ -25,11 +25,21 @@ class CurrencyRatesAdapter(
         mainCurrencyListener.newMainCurrencyAmountEntered(it)
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is MainCurrency -> TYPE_MAIN_CURRENCY
+            is ConvertedCurrency -> TYPE_CONVERTED_CURRENCY
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHolder {
-        return CurrencyViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.currency_list_item, parent, false)
-        )
+        val itemView = LayoutInflater.from(parent.context)
+            .inflate(R.layout.currency_list_item, parent, false)
+        return when (viewType) {
+            TYPE_MAIN_CURRENCY -> MainViewHolder(itemView)
+            TYPE_CONVERTED_CURRENCY -> ConvertedViewHolder(itemView)
+            else -> throw IllegalArgumentException("Unknown view type: $viewType")
+        }
     }
 
     override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
@@ -40,41 +50,47 @@ class CurrencyRatesAdapter(
             currencyName.text = uiModel.currencyName
 
             if (uiModel is MainCurrency) mainAmountTextWatcher.isEnabled = false
-            currencyAmount.setText(uiModel.amount)
+            if (currencyAmount.text.toString() != uiModel.amount) {
+                currencyAmount.setText(uiModel.amount)
+            }
             mainAmountTextWatcher.isEnabled = true
 
-            when (uiModel) {
-                is MainCurrency -> setMainCurrencyListeners(currencyAmount)
-                is ConvertedCurrency -> setConvertedCurrencyListeners(uiModel, currencyAmount)
+            when (holder) {
+                is MainViewHolder -> holder.setCurrencyAmountTextWatcher(mainAmountTextWatcher)
+                is ConvertedViewHolder -> {
+                    currencyAmount.setOnClickListener {
+                        mainCurrencyListener.newMainCurrencySelected(
+                            uiModel.amount,
+                            uiModel.currencyCode
+                        )
+                    }
+                }
             }
-        }
-    }
-
-    private fun setMainCurrencyListeners(editText: EditText) {
-        editText.setOnClickListener(null)
-        editText.addTextChangedListener(mainAmountTextWatcher)
-    }
-
-    private fun setConvertedCurrencyListeners(
-        uiModel: CurrencyUiModel,
-        editText: EditText
-    ) {
-        editText.removeTextChangedListener(mainAmountTextWatcher)
-        editText.setOnClickListener {
-            mainCurrencyListener.newMainCurrencySelected(
-                uiModel.amount,
-                uiModel.currencyCode
-            )
         }
     }
 }
 
-class CurrencyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+abstract class CurrencyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val flagImage: ImageView = itemView.findViewById(R.id.currency_flag_image)
     val currencyCode: TextView = itemView.findViewById(R.id.currency_code_label)
     val currencyName: TextView = itemView.findViewById(R.id.currency_name_label)
     val currencyAmount: EditText = itemView.findViewById(R.id.currency_amount_edit)
 }
+
+class MainViewHolder(itemView: View) : CurrencyViewHolder(itemView) {
+
+    private var activeWatcher: TextWatcher? = null
+
+    fun setCurrencyAmountTextWatcher(watcher: TextWatcher) {
+        if (activeWatcher != null) {
+            currencyAmount.removeTextChangedListener(activeWatcher)
+        }
+        activeWatcher = watcher
+        currencyAmount.addTextChangedListener(watcher)
+    }
+}
+
+class ConvertedViewHolder(itemView: View) : CurrencyViewHolder(itemView)
 
 object CurrencyDiffUtilCallback : DiffUtil.ItemCallback<CurrencyUiModel>() {
     override fun areItemsTheSame(
@@ -112,3 +128,6 @@ private class SimpleTextWatcher(
     }
 
 }
+
+private const val TYPE_MAIN_CURRENCY = 0
+private const val TYPE_CONVERTED_CURRENCY = 1

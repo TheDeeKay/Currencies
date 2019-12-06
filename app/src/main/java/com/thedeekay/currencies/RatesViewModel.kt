@@ -28,11 +28,12 @@ class RatesViewModel(
     val currencyAmounts: Flowable<List<CurrencyUiModel>> =
         mainCurrencySubject
             .toFlowable(BackpressureStrategy.LATEST)
-            .switchMap { (amount, currency) ->
-                calculateRatesUseCase.execute(Money(amount, currency))
+            .switchMap { mainCurrency ->
+                calculateRatesUseCase.execute(mainCurrency)
                     .map { currencies ->
-                        listOf(MainCurrency(currency, amount.toString())) +
-                                currencies.map { ConvertedCurrency(it) }
+                        listOf(
+                            MainCurrency(mainCurrency.currency, mainCurrency.amount.toString())
+                        ) + currencies.map { ConvertedCurrency(it) }
                     }
             }
 
@@ -41,7 +42,8 @@ class RatesViewModel(
     }
 
     fun setNewMainCurrencyAmount(amount: String) {
-        mainCurrencySubject.onNext(mainCurrencySubject.value!!.copy(amount = BigDecimal(amount)))
+        val bigDecimalAmount = if (amount.isNotEmpty()) BigDecimal(amount) else BigDecimal.ZERO
+        mainCurrencySubject.onNext(mainCurrencySubject.value!!.copy(amount = bigDecimalAmount))
     }
 }
 
