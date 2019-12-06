@@ -3,13 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".RatesFragment">
 
-    <fragment
-        android:id="@+id/fragment_rates_container"
-        android:name="com.thedeekay.currencies.RatesFragment"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout="@layout/fragment_rates" />
+        android:text="Hello world!" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
